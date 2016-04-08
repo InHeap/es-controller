@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "sourceMap": false
+    },
+    "files": [
+        "index.ts",
+        "test/index.ts",
+        "test/Controller/home.ts"
+    ]
+}

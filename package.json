@@ -1,0 +1,33 @@
+{
+  "name": "es6-controller",
+  "version": "1.0.0",
+  "description": "Controller framework for Nodejs supporting es6",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nitin Bansal",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "express": "*",
+    "xregexp": "*",
+    "harmony-reflect": "*"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/InHeap/es6-controller.git"
+  },
+  "keywords": [
+    "nodejs",
+    "es6",
+    "controller"
+  ],
+  "bugs": {
+    "url": "https://github.com/InHeap/es6-controller/issues"
+  },
+  "homepage": "https://github.com/InHeap/es6-controller#readme",
+  "directories": {
+    "test": "test"
+  }
+}
