@@ -10,9 +10,11 @@ import es = require("./../index");
 });*/
 
 var app = express();
+
 var defaults: Map<string, string> = new Map<string, string>();
 defaults.set("controller", "Home");
-defaults.set("action", "index");
+defaults.set("action", null);
+// defaults.set("id", null);
 
 var router = es.router;
 router.add("Default", "/{controller}/{action}", __dirname + "/Controller", defaults, false);

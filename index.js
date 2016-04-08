@@ -64,6 +64,14 @@ class ControllerContainer {
     }
 }
 exports.ControllerContainer = ControllerContainer;
+class RequestContainer {
+    constructor() {
+        this.match = false;
+        this.parts = null;
+        this.controller = null;
+        this.action = null;
+    }
+}
 class Route {
     constructor(name, template, dir, defaults, includeSubDir) {
         this.templateParams = new Array();
@@ -129,7 +137,7 @@ class Route {
             if (word) {
                 if (xregexp.test(word, this.templateregex)) {
                     let param = xregexp.exec(word, this.templateregex)["identifier"];
-                    if (param !== "controller" || param !== "action") {
+                    if (param && param !== "controller" && param !== "action") {
                         this.templateParams.push(param);
                     }
                     if (this.defaults.has(param)) {
@@ -146,49 +154,57 @@ class Route {
         }
         this.reg = xregexp(urlregexStr, "g");
     }
-    handle(req, res) {
+    match(req) {
+        let reqCon = new RequestContainer();
         // Check for template regular expression
         if (!xregexp.test(req.url, this.reg)) {
-            return false;
+            return reqCon;
         }
-        let parts = xregexp.exec(req.url, this.reg);
+        reqCon.parts = xregexp.exec(req.url, this.reg);
         // Check Controller
-        let con = null;
-        if (parts["controller"]) {
-            con = this.controllerMap.get(parts["controller"]);
+        if (reqCon.parts["controller"]) {
+            reqCon.controller = this.controllerMap.get(reqCon.parts["controller"]);
         }
         else if (this.defaults.get("controller")) {
-            con = this.controllerMap.get(this.defaults.get("controller"));
+            reqCon.controller = this.controllerMap.get(this.defaults.get("controller"));
         }
-        if (!con) {
-            return false;
+        if (!reqCon.controller) {
+            return reqCon;
         }
         // Check Action
-        let action = null;
-        if (parts["action"]) {
-            action = con.getAction(req.method, parts["action"]);
+        if (reqCon.parts["action"]) {
+            reqCon.action = reqCon.controller.getAction(req.method, reqCon.parts["action"]);
         }
         else if (this.defaults.get("action")) {
-            action = con.getAction(req.method, this.defaults.get("action"));
+            reqCon.action = reqCon.controller.getAction(req.method, this.defaults.get("action"));
         }
         else {
-            action = con.getAction(req.method, null);
+            reqCon.action = reqCon.controller.getAction(req.method, null);
         }
-        if (!action) {
-            return false;
+        if (!reqCon.action) {
+            return reqCon;
         }
-        // Setting Request Parameters
-        for (let i = 0; i < this.templateParams.length; i++) {
-            let x = this.templateParams[i];
-            if (parts[x]) {
-                req.params[x] = parts[x];
+        reqCon.match = true;
+        return reqCon;
+    }
+    handle(req, res, reqCon) {
+        let p = new Promise((resolve) => {
+            // Setting Request Parameters
+            for (let i = 0; i < this.templateParams.length; i++) {
+                let x = this.templateParams[i];
+                if (reqCon.parts[x]) {
+                    req.params[x] = reqCon.parts[x];
+                }
+                else {
+                    req.params[x] = this.defaults.get(x);
+                }
             }
-            else {
-                req.params[x] = this.defaults.get(x);
-            }
-        }
-        con.handle(action, req, res);
-        return true;
+            resolve();
+        });
+        p.then(() => {
+            reqCon.controller.handle(reqCon.action, req, res);
+        });
+        return p;
     }
 }
 exports.Route = Route;
@@ -200,8 +216,22 @@ class Router {
         let route = new Route(name, template, dir, defaults, includeSubDir);
         this.addRoute(route);
     }
-    addRoute(route) {
+    addRoute(obj) {
+        let route = new Route(obj.name, obj.template, obj.dir, obj.defaults, obj.includeSubDir);
         this.routes.push(route);
+    }
+    load(fileName) {
+        fs.readFile(fileName, "utf-8", (err, data) => {
+            let obj = JSON.parse(data);
+            if (Array.isArray(obj)) {
+                obj.forEach(element => {
+                    this.addRoute(element);
+                });
+            }
+            else {
+                this.addRoute(obj);
+            }
+        });
     }
 }
 exports.Router = Router;
@@ -209,10 +239,12 @@ exports.router = new Router();
 function handler(req, res, next) {
     for (let i = 0; i < exports.router.routes.length; i++) {
         let route = exports.router.routes[i];
-        if (route.handle(req, res)) {
+        let reqCon = route.match(req);
+        if (reqCon.match) {
+            let p = route.handle(req, res, reqCon);
+            p.then(next);
             break;
         }
     }
-    next();
 }
 exports.handler = handler;
