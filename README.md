@@ -114,13 +114,13 @@ router.load(__dirname + "/config.json");
 ```
 
 #### config.json
-Specify one Object or an Array of Object.
+Specify one Object or an Array of Object. For directory path, you can use "__dirname" global variable as "{dirname}" template in config file.
 
 ```
 {
     "name": "Default",
     "template": "/{controller}/{action}",
-    "dir": "/Users/ninu/Documents/github/es6-controller/test/Controller",
+    "dir": "{dirname}/test/Controller",
     "includeSubDir": false,
     "defaults": {
         "controller": "Home",
