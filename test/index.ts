@@ -17,6 +17,7 @@ defaults.set("action", null);
 // defaults.set("id", null);
 
 var router = es.router;
+// router.load(__dirname + "/config.json");
 router.add("Default", "/{controller}/{action}", __dirname + "/Controller", defaults, false);
 
 app.use(es.handler);

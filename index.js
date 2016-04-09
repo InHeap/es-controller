@@ -216,8 +216,29 @@ class Router {
         let route = new Route(name, template, dir, defaults, includeSubDir);
         this.addRoute(route);
     }
+    mapToObj(strMap) {
+        let obj = new Object();
+        strMap.forEach((value, key) => {
+            obj[key] = value;
+        });
+        return obj;
+    }
+    objToMap(obj) {
+        let strMap = new Map();
+        for (let k of Object.keys(obj)) {
+            strMap.set(k, obj[k]);
+        }
+        return strMap;
+    }
     addRoute(obj) {
-        let route = new Route(obj.name, obj.template, obj.dir, obj.defaults, obj.includeSubDir);
+        let m = null;
+        if (obj.defaults instanceof Map) {
+            m = obj.defaults;
+        }
+        else {
+            m = this.objToMap(obj.defaults);
+        }
+        let route = new Route(obj.name, obj.template, obj.dir, m, obj.includeSubDir);
         this.routes.push(route);
     }
     load(fileName) {

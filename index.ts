@@ -252,8 +252,31 @@ export class Router {
         this.addRoute(route);
     }
 
+    public mapToObj(strMap: Map<string, any>): any {
+        let obj = new Object();
+        strMap.forEach((value, key) => {
+            obj[key] = value;
+        });
+        return obj;
+    }
+
+    objToMap(obj: any): Map<string, any> {
+        let strMap: Map<string, any> = new Map<string, any>();
+        for (let k of Object.keys(obj)) {
+            strMap.set(k, obj[k]);
+        }
+        return strMap;
+    }
+
     public addRoute(obj: any): void {
-        let route: Route = new Route(obj.name, obj.template, obj.dir, obj.defaults, obj.includeSubDir);
+        let m: Map<string, any> = null;
+        if (obj.defaults instanceof Map) {
+            m = obj.defaults;
+        } else {
+            m = this.objToMap(obj.defaults);
+        }
+
+        let route: Route = new Route(obj.name, obj.template, obj.dir, m, obj.includeSubDir);
         this.routes.push(route);
     }
 
