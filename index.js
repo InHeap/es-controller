@@ -28,20 +28,24 @@ class ControllerContainer {
         this.actionMap = new Map();
     }
     bind(controller) {
-        this.generate = function () {
-            return new controller();
-        };
-        let c = this.generate();
-        let keys = Reflect.ownKeys(controller.prototype);
-        for (let i = 0; i < keys.length; i++) {
-            let k = keys[i];
-            if (k && k !== "constructor") {
-                let o = Reflect.get(c, k);
-                if (typeof o === "function") {
-                    this.actionMap.set(k, o);
+        let p = new Promise((resolve) => {
+            this.generate = function () {
+                return new controller();
+            };
+            let c = this.generate();
+            resolve(c);
+        });
+        p.then((c) => {
+            let keys = Reflect.ownKeys(controller.prototype);
+            keys.forEach((k) => {
+                if (k && k !== "constructor") {
+                    let o = Reflect.get(c, k);
+                    if (typeof o === "function") {
+                        this.actionMap.set(k, o);
+                    }
                 }
-            }
-        }
+            });
+        });
     }
     getAction(method, actionName) {
         method = method.toLowerCase();
@@ -86,20 +90,17 @@ class Route {
     }
     // Binding Controller
     bind(dir, includeSubDir) {
-        let files = this.fileList(dir, includeSubDir);
-        for (let i = 0; i < files.length; i++) {
-            let f = files[i];
-            if (f.endsWith(".js")) {
-                let m = require(f);
+        this.fileList(dir, includeSubDir, (filename) => {
+            if (filename.endsWith(".js")) {
+                let m = require(filename);
                 let keys = Reflect.ownKeys(m);
-                for (let j = 0; j < keys.length; j++) {
-                    let k = keys[j];
+                keys.forEach((k) => {
                     let c = Reflect.get(m, k);
-                    this.bindController(k.toString(), c);
-                }
+                    this.bindController(k, c);
+                });
             }
-        }
-        this.setTemplate(this.template);
+        });
+        Promise.resolve(this.setTemplate(this.template));
     }
     bindController(controllerName, controller) {
         if (typeof controller === "function") {
@@ -111,22 +112,22 @@ class Route {
             }
         }
     }
-    fileList(dir, includeSubDir) {
-        let list = new Array();
-        let entries = fs.readdirSync(dir);
-        for (let i = 0; i < entries.length; i++) {
-            let file = entries[i];
-            let name = path.join(dir, file);
-            if (fs.statSync(name).isDirectory()) {
-                if (includeSubDir) {
-                    list.concat(this.fileList(name, includeSubDir));
-                }
-            }
-            else {
-                list.push(name);
-            }
-        }
-        return list;
+    fileList(dir, includeSubDir, callback) {
+        fs.readdir(dir, (err, files) => {
+            files.forEach((file) => {
+                let name = path.join(dir, file);
+                fs.stat(name, (err, stats) => {
+                    if (stats.isDirectory()) {
+                        if (includeSubDir) {
+                            this.fileList(name, includeSubDir, callback);
+                        }
+                    }
+                    else if (typeof callback === "function") {
+                        callback(name);
+                    }
+                });
+            });
+        });
     }
     setTemplate(template) {
         this.template = template;

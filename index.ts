@@ -46,20 +46,25 @@ export class ControllerContainer {
     generate: IControllerFactory;
 
     bind(controller: IClass<Controller>): void {
-        this.generate = function(): Controller {
-            return new controller();
-        };
-        let c = this.generate();
-        let keys: string = Reflect.ownKeys(controller.prototype);
-        for (let i = 0; i < keys.length; i++) {
-            let k = keys[i];
-            if (k && k !== "constructor") {
-                let o = Reflect.get(c, k);
-                if (typeof o === "function") {
-                    this.actionMap.set(k, o);
+        let p = new Promise((resolve) => {
+            this.generate = function(): Controller {
+                return new controller();
+            };
+            let c = this.generate();
+            resolve(c);
+        });
+
+        p.then((c: Controller) => {
+            let keys: string[] = Reflect.ownKeys(controller.prototype);
+            keys.forEach((k) => {
+                if (k && k !== "constructor") {
+                    let o = Reflect.get(c, k);
+                    if (typeof o === "function") {
+                        this.actionMap.set(k, o);
+                    }
                 }
-            }
-        }
+            });
+        });
     }
 
     getAction(method: string, actionName: string): any {
@@ -115,20 +120,17 @@ export class Route {
 
     // Binding Controller
     bind(dir: string, includeSubDir: boolean): void {
-        let files = this.fileList(dir, includeSubDir);
-        for (let i = 0; i < files.length; i++) {
-            let f = files[i];
-            if (f.endsWith(".js")) {
-                let m = require(f);
-                let keys = Reflect.ownKeys(m);
-                for (let j = 0; j < keys.length; j++) {
-                    let k = keys[j];
+        this.fileList(dir, includeSubDir, (filename: string) => {
+            if (filename.endsWith(".js")) {
+                let m = require(filename);
+                let keys: string[] = Reflect.ownKeys(m);
+                keys.forEach((k: string) => {
                     let c = Reflect.get(m, k);
-                    this.bindController(k.toString(), c);
-                }
+                    this.bindController(k, c);
+                });
             }
-        }
-        this.setTemplate(this.template);
+        });
+        Promise.resolve(this.setTemplate(this.template));
     }
 
     private bindController(controllerName: string, controller: IClass<Controller>): void {
@@ -142,21 +144,21 @@ export class Route {
         }
     }
 
-    private fileList(dir: string, includeSubDir: boolean): string[] {
-        let list: string[] = new Array<string>();
-        let entries = fs.readdirSync(dir);
-        for (let i = 0; i < entries.length; i++) {
-            let file = entries[i];
-            let name = path.join(dir, file);
-            if (fs.statSync(name).isDirectory()) {
-                if (includeSubDir) {
-                    list.concat(this.fileList(name, includeSubDir));
-                }
-            } else {
-                list.push(name);
-            }
-        }
-        return list;
+    private fileList(dir: string, includeSubDir: boolean, callback: any): void {
+        fs.readdir(dir, (err, files: string[]) => {
+            files.forEach((file: string) => {
+                let name = path.join(dir, file);
+                fs.stat(name, (err, stats: fs.Stats) => {
+                    if (stats.isDirectory()) {
+                        if (includeSubDir) {
+                            this.fileList(name, includeSubDir, callback);
+                        }
+                    } else if (typeof callback === "function") {
+                        callback(name);
+                    }
+                });
+            });
+        });
     }
 
     setTemplate(template: string): void {
