@@ -1,7 +1,7 @@
 es6-controller
 ===================
 
-Controller framework for Nodejs supporting ecmascript-6. No more hassling with code in your route. es6-controller automatically set up routing based on your controllers.
+Controller framework for Nodejs supporting ecmascript-6. No more hassling with code in your route. es6-controller automatically set up routing based on your controllers. Typescript definition is also present for strict mode.
 
 
 ### Contributors
@@ -13,7 +13,7 @@ Nitin Bansal https://github.com/nitinbansal1989
     $ npm install es6-controller
 
 ## Usage
-	
+Just add the routes to router object and add the handler to the express module.
 
 ```js
 const es = require("es6-controller");
@@ -103,4 +103,28 @@ class Home extends es.Controller {
 }
 exports.Home = Home;
 
+```
+
+### Load from File
+Routes can also be loaded from a json file. Use the load method od the router to specify the path to the configuration file. 
+
+```
+var router = es.router;
+router.load(__dirname + "/config.json");
+```
+
+#### config.json
+Specify one Object or or an Array of Object.
+
+```
+{
+    "name": "Default",
+    "template": "/{controller}/{action}",
+    "dir": "/Users/ninu/Documents/github/es6-controller/test/Controller",
+    "includeSubDir": false,
+    "defaults": {
+        "controller": "Home",
+        "action": null
+    }
+}
 ```
