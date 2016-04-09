@@ -1,6 +1,6 @@
 {
   "name": "es6-controller",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Controller framework for Nodejs supporting es6",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,10 @@
   "keywords": [
     "nodejs",
     "es6",
-    "controller"
+    "ecmascript 6",
+    "controller",
+    "typescript",
+    "router"
   ],
   "bugs": {
     "url": "https://github.com/InHeap/es6-controller/issues"
