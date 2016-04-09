@@ -11,14 +11,14 @@ import es = require("./../index");
 
 var app = express();
 
-var defaults: Map<string, string> = new Map<string, string>();
-defaults.set("controller", "Home");
-defaults.set("action", null);
+// var defaults: Map<string, string> = new Map<string, string>();
+// defaults.set("controller", "Home");
+// defaults.set("action", null);
 // defaults.set("id", null);
 
 var router = es.router;
-// router.load(__dirname + "/config.json");
-router.add("Default", "/{controller}/{action}", __dirname + "/Controller", defaults, false);
+router.load(__dirname + "/config.json");
+// router.add("Default", "/{controller}/{action}", __dirname + "/Controller", defaults, false);
 
 app.use(es.handler);
 

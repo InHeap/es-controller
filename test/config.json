@@ -1,7 +1,7 @@
 {
     "name": "Default",
     "template": "/{controller}/{action}",
-    "dir": "/Users/ninu/Documents/github/es6-controller/test/Controller",
+    "dir": "{dirname}/test/Controller",
     "includeSubDir": false,
     "defaults": {
         "controller": "Home",

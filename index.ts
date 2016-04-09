@@ -277,7 +277,7 @@ export class Router {
         } else {
             m = this.objToMap(obj.defaults);
         }
-
+        obj.dir = obj.dir.replace("{dirname}", __dirname);
         let route: Route = new Route(obj.name, obj.template, obj.dir, m, obj.includeSubDir);
         this.routes.push(route);
     }
