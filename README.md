@@ -106,7 +106,7 @@ exports.Home = Home;
 ```
 
 ### Load from File
-Routes can also be loaded from a json file. Use the load method od the router to specify the path to the configuration file. 
+Routes can also be loaded from a json file. Use the load method of the router to specify the path to the configuration file. 
 
 ```
 var router = es.router;
@@ -114,7 +114,7 @@ router.load(__dirname + "/config.json");
 ```
 
 #### config.json
-Specify one Object or or an Array of Object.
+Specify one Object or an Array of Object.
 
 ```
 {
