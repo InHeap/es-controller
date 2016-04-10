@@ -1,7 +1,7 @@
 {
     "name": "Default",
     "template": "/{controller}/{action}",
-    "dir": "{dirname}/test/Controller",
+    "dir": "{dirname}/Controller",
     "includeSubDir": false,
     "defaults": {
         "controller": "Home",

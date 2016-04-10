@@ -270,27 +270,29 @@ export class Router {
         return strMap;
     }
 
-    public addRoute(obj: any): void {
+    public addRoute(obj: any, baseDir?: string): void {
         let m: Map<string, any> = null;
         if (obj.defaults instanceof Map) {
             m = obj.defaults;
         } else {
             m = this.objToMap(obj.defaults);
         }
-        obj.dir = obj.dir.replace("{dirname}", __dirname);
+        if (baseDir) {
+            obj.dir = obj.dir.replace("{dirname}", baseDir);
+        }
         let route: Route = new Route(obj.name, obj.template, obj.dir, m, obj.includeSubDir);
         this.routes.push(route);
     }
 
-    public load(fileName: string): void {
+    public load(fileName: string, baseDir?: string): void {
         fs.readFile(fileName, "utf-8", (err: NodeJS.ErrnoException, data: string) => {
             let obj = JSON.parse(data);
             if (Array.isArray(obj)) {
                 obj.forEach(element => {
-                    this.addRoute(element);
+                    this.addRoute(element, baseDir);
                 });
             } else {
-                this.addRoute(obj);
+                this.addRoute(obj, baseDir);
             }
         });
     }

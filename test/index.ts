@@ -17,7 +17,7 @@ var app = express();
 // defaults.set("id", null);
 
 var router = es.router;
-router.load(__dirname + "/config.json");
+router.load(__dirname + "/config.json", __dirname);
 // router.add("Default", "/{controller}/{action}", __dirname + "/Controller", defaults, false);
 
 app.use(es.handler);

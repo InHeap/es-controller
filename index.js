@@ -231,7 +231,7 @@ class Router {
         }
         return strMap;
     }
-    addRoute(obj) {
+    addRoute(obj, baseDir) {
         let m = null;
         if (obj.defaults instanceof Map) {
             m = obj.defaults;
@@ -239,20 +239,22 @@ class Router {
         else {
             m = this.objToMap(obj.defaults);
         }
-        obj.dir = obj.dir.replace("{dirname}", __dirname);
+        if (baseDir) {
+            obj.dir = obj.dir.replace("{dirname}", baseDir);
+        }
         let route = new Route(obj.name, obj.template, obj.dir, m, obj.includeSubDir);
         this.routes.push(route);
     }
-    load(fileName) {
+    load(fileName, baseDir) {
         fs.readFile(fileName, "utf-8", (err, data) => {
             let obj = JSON.parse(data);
             if (Array.isArray(obj)) {
                 obj.forEach(element => {
-                    this.addRoute(element);
+                    this.addRoute(element, baseDir);
                 });
             }
             else {
-                this.addRoute(obj);
+                this.addRoute(obj, baseDir);
             }
         });
     }
