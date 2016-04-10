@@ -120,7 +120,7 @@ Specify one Object or an Array of Object. For directory path, you can use "__dir
 {
     "name": "Default",
     "template": "/{controller}/{action}",
-    "dir": "{dirname}/test/Controller",
+    "dir": "{dirname}/Controller",
     "includeSubDir": false,
     "defaults": {
         "controller": "Home",
