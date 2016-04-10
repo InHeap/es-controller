@@ -110,7 +110,7 @@ Routes can also be loaded from a json file. Use the load method of the router to
 
 ```
 var router = es.router;
-router.load(__dirname + "/config.json");
+router.load(__dirname + "/config.json", __dirname);
 ```
 
 #### config.json
