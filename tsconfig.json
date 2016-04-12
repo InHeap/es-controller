@@ -6,6 +6,12 @@
     },
     "files": [
         "index.ts",
+        "lib/Controller.ts",
+        "lib/ControllerContainer.ts",
+        "lib/handler.ts",
+        "lib/RequestContainer.ts",
+        "lib/Route.ts",
+        "lib/Router.ts",
         "test/index.ts",
         "test/Controller/home.ts"
     ]
