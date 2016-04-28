@@ -8,7 +8,6 @@
 import fs = require("fs");
 import path = require("path");
 import express = require("express");
-import Reflect = require("harmony-reflect");
 import xregexp = require("xregexp");
 
 import Controller from "./Controller";
@@ -42,10 +41,10 @@ export default class {
         this.fileList(dir, includeSubDir, (filename: string) => {
             if (filename.endsWith(".js")) {
                 let m = require(filename);
-                let keys: string[] = Reflect.ownKeys(m);
-                keys.forEach((k: string) => {
+                let keys: (string | number | symbol)[] = Reflect.ownKeys(m);
+                keys.forEach((k: (string | number | symbol)) => {
                     let c = Reflect.get(m, k);
-                    this.bindController(k, c);
+                    this.bindController(k.toString(), c);
                 });
             }
         });

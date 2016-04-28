@@ -1,6 +1,6 @@
 {
   "name": "es6-controller",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Controller framework for Nodejs supporting es6",
   "main": "index.js",
   "scripts": {

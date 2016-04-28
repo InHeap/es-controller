@@ -1,8 +1,4 @@
-// import * as fs from "fs";
-// import * as path from "path";
-// import * as express from "express";
-// import * as xregexp from "xregexp";
-// import {System} from "es6-module-loader";
+/// <reference path="typings/main/ambient/node/index.d.ts" />
 "use strict";
 const Controller_1 = require("./lib/Controller");
 exports.Controller = Controller_1.default;

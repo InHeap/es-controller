@@ -2,7 +2,6 @@
 /// <reference path="./../typings/main/ambient/express/index.d.ts" />
 
 import express = require("express");
-import Reflect = require("harmony-reflect");
 
 import Controller from "./Controller";
 
@@ -23,7 +22,7 @@ export default class {
 
     bind(controller: IClass<Controller>): void {
         let p = new Promise((resolve) => {
-            this.generate = function(): Controller {
+            this.generate = function (): Controller {
                 return new controller();
             };
             let c = this.generate();
@@ -31,12 +30,12 @@ export default class {
         });
 
         p.then((c: Controller) => {
-            let keys: string[] = Reflect.ownKeys(controller.prototype);
+            let keys: (string | number | symbol)[] = Reflect.ownKeys(controller.prototype);
             keys.forEach((k) => {
                 if (k && k !== "constructor") {
                     let o = Reflect.get(c, k);
                     if (typeof o === "function") {
-                        this.actionMap.set(k, o);
+                        this.actionMap.set(k.toString(), o);
                     }
                 }
             });
