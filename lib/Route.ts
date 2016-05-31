@@ -1,9 +1,9 @@
-/// <reference path="./../typings/main/ambient/node/index.d.ts" />
-/// <reference path="./../typings/main/ambient/express/index.d.ts" />
-/// <reference path="./../typings/main/ambient/express-serve-static-core/index.d.ts" />
-/// <reference path="./../typings/main/ambient/serve-static/index.d.ts" />
-/// <reference path="./../typings/main/ambient/mime/index.d.ts" />
-/// <reference path="./../typings/main/ambient/xregexp/index.d.ts" />
+/// <reference path="./../typings/globals/node/index.d.ts" />
+/// <reference path="./../typings/globals/express/index.d.ts" />
+/// <reference path="./../typings/globals/express-serve-static-core/index.d.ts" />
+/// <reference path="./../typings/globals/serve-static/index.d.ts" />
+/// <reference path="./../typings/globals/mime/index.d.ts" />
+/// <reference path="./../typings/globals/xregexp/index.d.ts" />
 
 import fs = require("fs");
 import path = require("path");

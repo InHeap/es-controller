@@ -1,7 +1,7 @@
-es6-controller
+es-controller
 ===================
 
-Controller framework for Nodejs supporting ecmascript-6. No more hassling with code in your route. es6-controller automatically set up routing based on your controllers. Typescript definition is also present for strict mode.
+Controller framework for Nodejs supporting ecmascript-6. No more hassling with code in your route. es-controller automatically set up routing based on your controllers. Typescript definition is also present for strict mode.
 
 
 ### Contributors
@@ -10,24 +10,24 @@ Nitin Bansal https://github.com/nitinbansal1989
 
 ## Installation
 
-    $ npm install es6-controller
+    $ npm install es-controller
 
 ## Usage
 Just add the routes to router object and add the handler to the express module.
 
 ```js
-const es = require("es6-controller");
+const es = require("es-controller");
 
 //Your express-app
 var app = express();
 
 /*
-    Add a route to 'es6-controller' Router.
+    Add a route to 'es-controller' Router.
 */
 var router = es.router;
 router.add("Default", "/{controller}/{action}/{id}", __dirname + "/Controller", defaults, false);
 
-// Add es6-controller handler to express
+// Add es-controller handler to express
 app.use(es.handler);
 
 ```
@@ -65,7 +65,7 @@ A basic example: HomeController.js
 ```js
 
 "use strict";
-const es = require("es6-controller");
+const es = require("es-controller");
 /*
     Will set Controller Name as "Home"
 */

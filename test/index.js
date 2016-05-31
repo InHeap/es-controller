@@ -1,5 +1,5 @@
-/// <reference path="../typings/main/ambient/node/index.d.ts" />
-/// <reference path="../typings/main/ambient/express/index.d.ts" />
+/// <reference path="../typings/globals/node/index.d.ts" />
+/// <reference path="../typings/globals/express/index.d.ts" />
 /// <reference path="./../index.ts" />
 "use strict";
 const express = require("express");

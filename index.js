@@ -1,4 +1,4 @@
-/// <reference path="typings/main/ambient/node/index.d.ts" />
+/// <reference path="typings/globals/node/index.d.ts" />
 "use strict";
 const Controller_1 = require("./lib/Controller");
 exports.Controller = Controller_1.default;

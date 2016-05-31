@@ -1,6 +1,6 @@
 {
-  "name": "es6-controller",
-  "version": "1.0.12",
+  "name": "es-controller",
+  "version": "1.0.0",
   "description": "Controller framework for Nodejs supporting es6",
   "main": "index.js",
   "scripts": {
@@ -10,13 +10,12 @@
   "license": "GPL-3.0",
   "dependencies": {
     "express": "*",
-    "xregexp": "*",
-    "harmony-reflect": "*"
+    "xregexp": "*"
   },
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/InHeap/es6-controller.git"
+    "url": "git+https://github.com/InHeap/es-controller.git"
   },
   "keywords": [
     "nodejs",
@@ -27,9 +26,9 @@
     "router"
   ],
   "bugs": {
-    "url": "https://github.com/InHeap/es6-controller/issues"
+    "url": "https://github.com/InHeap/es-controller/issues"
   },
-  "homepage": "https://github.com/InHeap/es6-controller#readme",
+  "homepage": "https://github.com/InHeap/es-controller#readme",
   "directories": {
     "test": "test"
   }
