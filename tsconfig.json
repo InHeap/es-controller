@@ -1,12 +1,15 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "sourceMap": false
-    },
-    "exclude": [
-        "typings/browser.d.ts",
-        "typings/browser",
-        "node_modules"
-    ]
+	"compilerOptions": {
+		"target": "es6",
+		"module": "commonjs",
+		"sourceMap": false,
+		"outDir": "./",
+		"allowSyntheticDefaultImports": true,
+		"removeComments": true
+	},
+	"exclude": [
+		"typings/browser.d.ts",
+		"typings/browser",
+		"node_modules"
+	]
 }

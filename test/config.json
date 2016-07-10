@@ -1,10 +1,10 @@
 {
-    "name": "Default",
-    "template": "/{controller}/{action}",
-    "dir": "{dirname}/Controller",
-    "includeSubDir": false,
-    "defaults": {
-        "controller": "Home",
-        "action": null
-    }
+	"name": "Default",
+	"template": "/{controller}/{action}",
+	"dir": "{dirname}/Controller",
+	"includeSubDir": false,
+	"defaults": {
+		"controller": "Home",
+		"action": null
+	}
 }

@@ -1,5 +1,5 @@
-/// <reference path="../typings/globals/node/index.d.ts" />
-/// <reference path="../typings/globals/express/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/globals/express/index.d.ts" />
 /// <reference path="./../index.ts" />
 
 import express = require("express");
@@ -22,6 +22,6 @@ router.load(__dirname + "/config.json", __dirname);
 
 app.use(es.handler);
 
-app.listen(3000, function() {
-    // console.log('Example app listening on port 3000!');
+app.listen(3000, function () {
+	// console.log('Example app listening on port 3000!');
 });
