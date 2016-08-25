@@ -48,7 +48,7 @@ export default class {
         });
       }
     });
-    Promise.resolve(this.setTemplate(this.template));
+    this.setTemplate(this.template);
   }
 
   private bindController(controllerName: string, controller: IClass<Controller>): void {
@@ -139,25 +139,25 @@ export default class {
     return reqCon;
   }
 
-  handle(req: express.Request, res: express.Response, reqCon: RequestContainer): Promise<any> {
-    let p: Promise<any> = new Promise((resolve) => {
-      // Setting Request Parameters
-      for (let i = 0; i < this.templateParams.length; i++) {
-        let x = this.templateParams[i];
-        if (reqCon.parts[x]) {
-          req.params[x] = reqCon.parts[x];
-        } else {
-          req.params[x] = this.defaults.get(x);
-        }
-      }
-      resolve();
-    });
+  async handle(req: express.Request, res: express.Response, reqCon: RequestContainer): Promise<any> {
+    // let p: Promise<any> = new Promise((resolve) => {
+		// Setting Request Parameters
+		for (let i = 0; i < this.templateParams.length; i++) {
+			let x = this.templateParams[i];
+			if (reqCon.parts[x]) {
+				req.params[x] = reqCon.parts[x];
+			} else {
+				req.params[x] = this.defaults.get(x);
+			}
+		}
+		// resolve();
+    // });
 
-    p.then(() => {
-      reqCon.controller.handle(reqCon.action, req, res);
-    });
+    // p.then(() => {
+		await reqCon.controller.handle(reqCon.action, req, res);
+    // });
 
-    return p;
+    // return p;
   }
 
 }

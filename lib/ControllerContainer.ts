@@ -21,24 +21,19 @@ export default class {
 	generate: IControllerFactory;
 
 	bind(controller: IClass<Controller>): void {
-		let p = new Promise((resolve) => {
-			this.generate = function (): Controller {
-				return new controller();
-			};
-			let c = this.generate();
-			resolve(c);
-		});
+		this.generate = function (): Controller {
+			return new controller();
+		};
+		let c = this.generate();
 
-		p.then((c: Controller) => {
-			let keys: (string | number | symbol)[] = Reflect.ownKeys(controller.prototype);
-			keys.forEach((k) => {
-				if (k && k !== "constructor") {
-					let o = Reflect.get(c, k);
-					if (typeof o === "function") {
-						this.actionMap.set(k.toString(), o);
-					}
+		let keys: (string | number | symbol)[] = Reflect.ownKeys(controller.prototype);
+		keys.forEach((k) => {
+			if (k && k !== "constructor") {
+				let o = Reflect.get(c, k);
+				if (typeof o === "function") {
+					this.actionMap.set(k.toString(), o);
 				}
-			});
+			}
 		});
 	}
 
@@ -56,7 +51,7 @@ export default class {
 		return action;
 	}
 
-	handle(action: any, req: express.Request, res: express.Response): void {
+	async handle(action: any, req: express.Request, res: express.Response): Promise<void> {
 		let c = this.generate();
 		c.init(req, res);
 		Reflect.apply(action, c, [req, res]);

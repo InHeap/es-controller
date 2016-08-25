@@ -9,21 +9,16 @@ import RequestContainer from "./RequestContainer";
 import Route from "./Route";
 import Router from "./Router";
 
-export default function (req: express.Request, res: express.Response, next: express.NextFunction): any {
-  let match: boolean = false;
+export default async function (req: express.Request, res: express.Response, next: express.NextFunction): Promise<any> {
   for (let i = 0; i < router.routes.length; i++) {
     let route: Route = router.routes[i];
     let reqCon: RequestContainer = route.match(req);
     if (reqCon.match) {
-      match = true;
-      let p = route.handle(req, res, reqCon);
-      p.then(next);
+      await route.handle(req, res, reqCon);
       break;
     }
   }
-  if (!match) {
-    next();
-  }
+	next();
 }
 
 export var router: Router = new Router();
