@@ -1,6 +1,6 @@
 {
 	"name": "es-controller",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Controller framework for Nodejs supporting es6",
 	"main": "index.js",
 	"scripts": {
@@ -12,7 +12,9 @@
 		"express": "*",
 		"xregexp": "*"
 	},
-	"devDependencies": {},
+	"devDependencies": {
+		"pug": "*"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/InHeap/es-controller.git"

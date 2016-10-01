@@ -1,5 +1,6 @@
 /// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
 /// <reference path="/usr/local/lib/typings/globals/express/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/globals/mustache/index.d.ts" />
 /// <reference path="./../index.ts" />
 
 import express = require("express");
@@ -10,6 +11,8 @@ import es = require("./../index");
 });*/
 
 var app = express();
+app.set('view engine', 'pug');
+app.set('views', __dirname + '/views');
 
 // var defaults: Map<string, string> = new Map<string, string>();
 // defaults.set("controller", "Home");
@@ -23,5 +26,5 @@ router.load(__dirname + "/config.json", __dirname);
 app.use(es.handler);
 
 app.listen(3000, function () {
-	// console.log('Example app listening on port 3000!');
+	console.log('Example app listening on port 3000!');
 });

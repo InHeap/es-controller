@@ -2,16 +2,19 @@
 const es = require("./../../index");
 class Home extends es.Controller {
     get_index() {
-        this.res.send("Returning Get Index request");
+        return this.view({
+            title: "Title",
+            message: "Hello"
+        });
     }
     index() {
-        this.res.send("Returning Index request for all methods");
+        return "Returning Index request for all methods";
     }
     get() {
-        this.res.send("Get Response has been created");
+        return "Get Response has been created";
     }
     post() {
-        this.res.send("Post Response has been created");
+        return "Post Response has been created";
     }
 }
 exports.Home = Home;

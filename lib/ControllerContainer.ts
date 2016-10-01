@@ -3,7 +3,8 @@
 
 import express = require("express");
 
-import Controller from "./Controller";
+import Controller, { View } from "./Controller";
+import RequestContainer from "./RequestContainer";
 
 export interface IClass<T> {
 	new (): T;
@@ -51,10 +52,18 @@ export default class {
 		return action;
 	}
 
-	async handle(action: any, req: express.Request, res: express.Response): Promise<void> {
-		let c = this.generate();
-		c.init(req, res);
-		Reflect.apply(action, c, [req, res]);
+	async handle(reqCon: RequestContainer): Promise<void> {
+		let controller = this.generate();
+		controller.init(reqCon);
+		let result: any = Reflect.apply(reqCon.action, controller, [reqCon.req, reqCon.res]);
+		if (result instanceof View) {
+			if (!result.viewName) {
+				result.viewName = reqCon.controllerName + "/" + reqCon.actionName;
+			}
+			reqCon.res.render(result.viewName, result.args, null);
+		} else {
+			reqCon.res.send(result);
+		}
 	}
 
 }

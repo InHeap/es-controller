@@ -11,7 +11,7 @@ import express = require("express");
 import xregexp = require("xregexp");
 
 import Controller from "./Controller";
-import ControllerContainer, {IClass} from "./ControllerContainer";
+import ControllerContainer, { IClass } from "./ControllerContainer";
 import RequestContainer from "./RequestContainer";
 
 export default class {
@@ -115,9 +115,12 @@ export default class {
 
     // Check Controller
     if (reqCon.parts["controller"]) {
-      reqCon.controller = this.controllerMap.get(reqCon.parts["controller"]);
+      reqCon.controllerName = reqCon.parts["controller"];
     } else if (this.defaults.get("controller")) {
-      reqCon.controller = this.controllerMap.get(this.defaults.get("controller"));
+      reqCon.controllerName = this.defaults.get("controller");
+    }
+    if (reqCon.controllerName) {
+      reqCon.controller = this.controllerMap.get(reqCon.controllerName);
     }
     if (!reqCon.controller) {
       return reqCon;
@@ -125,12 +128,11 @@ export default class {
 
     // Check Action
     if (reqCon.parts["action"]) {
-      reqCon.action = reqCon.controller.getAction(req.method, reqCon.parts["action"]);
+      reqCon.actionName = reqCon.parts["action"];
     } else if (this.defaults.get("action")) {
-      reqCon.action = reqCon.controller.getAction(req.method, this.defaults.get("action"));
-    } else {
-      reqCon.action = reqCon.controller.getAction(req.method, null);
+      reqCon.actionName = this.defaults.get("action");
     }
+    reqCon.action = reqCon.controller.getAction(req.method, reqCon.actionName);
     if (!reqCon.action) {
       return reqCon;
     }
@@ -140,24 +142,19 @@ export default class {
   }
 
   async handle(req: express.Request, res: express.Response, reqCon: RequestContainer): Promise<any> {
-    // let p: Promise<any> = new Promise((resolve) => {
-		// Setting Request Parameters
-		for (let i = 0; i < this.templateParams.length; i++) {
-			let x = this.templateParams[i];
-			if (reqCon.parts[x]) {
-				req.params[x] = reqCon.parts[x];
-			} else {
-				req.params[x] = this.defaults.get(x);
-			}
-		}
-		// resolve();
-    // });
+    reqCon.req = req;
+    reqCon.res = res;
+    // Setting Request Parameters
+    for (let i = 0; i < this.templateParams.length; i++) {
+      let x = this.templateParams[i];
+      if (reqCon.parts[x]) {
+        req.params[x] = reqCon.parts[x];
+      } else {
+        req.params[x] = this.defaults.get(x);
+      }
+    }
 
-    // p.then(() => {
-		await reqCon.controller.handle(reqCon.action, req, res);
-    // });
-
-    // return p;
+    return await reqCon.controller.handle(reqCon);
   }
 
 }
