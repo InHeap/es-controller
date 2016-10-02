@@ -74,7 +74,10 @@ class Home extends es.Controller {
         Will be translated to get("/Home/index") (HTTP-method is extracted by first item in function name)
     */
     get_index() {
-        this.res.send("Returning Get Index request");
+        return this.view({
+            title: "Title",
+            message: "Hello"
+        });
     }
     
     /*
@@ -90,7 +93,10 @@ class Home extends es.Controller {
         Note: specified method with action request will have greater priority
     */
     get() {
-        this.res.send("Get Response has been created");
+        return {
+            title: "Title",
+            message: "Hello"
+        };
     }
     
     /*
