@@ -20,6 +20,7 @@ export default class {
   dir: string;
   defaults: Map<string, string>;
   includeSubDir: boolean;
+  filters: Array<express.RequestHandler> = new Array();
 
   private regex: string;
   private templateParams: Array<string> = new Array<string>();

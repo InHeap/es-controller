@@ -11,7 +11,10 @@ class Home extends es.Controller {
         return "Returning Index request for all methods";
     }
     get() {
-        return "Get Response has been created";
+        return {
+            title: "Title",
+            message: "Hello"
+        };
     }
     post() {
         return "Post Response has been created";

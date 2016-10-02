@@ -6,6 +6,7 @@ import RequestContainer from "./RequestContainer";
 
 export default class {
 	reqCon: RequestContainer = null;
+	filters: Array<express.RequestHandler> = new Array();
 
 	init(reqCon: RequestContainer): void {
 		this.reqCon = reqCon;

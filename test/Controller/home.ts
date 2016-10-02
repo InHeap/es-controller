@@ -20,7 +20,10 @@ export class Home extends es.Controller {
 	// Will be translated to get("/Home") when no action is found.
 	// Note: specified method with action request will have greater priority
 	get() {
-		return "Get Response has been created";
+		return {
+			title: "Title",
+			message: "Hello"
+		};
 	}
 
 	// Will be translated to post("/Home") when no action is found.
