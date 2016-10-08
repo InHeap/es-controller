@@ -32,7 +32,7 @@ export default class {
 			if (k && k !== "constructor") {
 				let o = Reflect.get(c, k);
 				if (typeof o === "function") {
-					this.actionMap.set(k.toString(), o);
+					this.actionMap.set(k.toString().toLowerCase(), o);
 				}
 			}
 		});
@@ -42,6 +42,7 @@ export default class {
 		method = method.toLowerCase();
 		let action: any = null;
 		if (actionName) {
+			actionName = actionName.toLowerCase();
 			action = this.actionMap.get(method + "_" + actionName);
 			if (!action) {
 				action = this.actionMap.get(actionName);

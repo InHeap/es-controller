@@ -39,7 +39,9 @@ export default class {
 
   // Binding Controller
   bind(dir: string, includeSubDir: boolean): void {
-    this.fileList(dir, includeSubDir, (filename: string) => {
+    let fileNames = this.fileList(dir, includeSubDir);
+    for (let i = 0; i < fileNames.length; i++) {
+      let filename = fileNames[i];
       if (filename.endsWith(".js")) {
         let m = require(filename);
         let keys: (string | number | symbol)[] = Reflect.ownKeys(m);
@@ -48,7 +50,7 @@ export default class {
           this.bindController(k.toString(), c);
         });
       }
-    });
+    }
     this.setTemplate(this.template);
   }
 
@@ -58,26 +60,27 @@ export default class {
       if (t instanceof Controller) {
         let c = new ControllerContainer();
         c.bind(controller);
-        this.controllerMap.set(controllerName, c);
+        this.controllerMap.set(controllerName.toLowerCase(), c);
       }
     }
   }
 
-  private fileList(dir: string, includeSubDir: boolean, callback: any): void {
-    fs.readdir(dir, (err, files: string[]) => {
-      files.forEach((file: string) => {
-        let name = path.join(dir, file);
-        fs.stat(name, (err, stats: fs.Stats) => {
-          if (stats.isDirectory()) {
-            if (includeSubDir) {
-              this.fileList(name, includeSubDir, callback);
-            }
-          } else if (typeof callback === "function") {
-            callback(name);
-          }
-        });
-      });
-    });
+  private fileList(dir: string, includeSubDir: boolean): string[] {
+    let files: string[] = fs.readdirSync(dir);
+    let fileNames: string[] = new Array<string>();
+    for (let i = 0; i < files.length; i++) {
+      let file = files[i];
+      let name = path.join(dir, file);
+      let stats: fs.Stats = fs.statSync(name);
+      if (stats.isDirectory()) {
+        if (includeSubDir) {
+          fileNames = fileNames.concat(this.fileList(name, includeSubDir));
+        }
+      } else {
+        fileNames.push(name);
+      }
+    }
+    return fileNames;
   }
 
   setTemplate(template: string): void {
@@ -121,7 +124,7 @@ export default class {
       reqCon.controllerName = this.defaults.get("controller");
     }
     if (reqCon.controllerName) {
-      reqCon.controller = this.controllerMap.get(reqCon.controllerName);
+      reqCon.controller = this.controllerMap.get(reqCon.controllerName.toLowerCase());
     }
     if (!reqCon.controller) {
       return reqCon;
