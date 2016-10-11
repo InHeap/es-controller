@@ -5,6 +5,7 @@ import express = require("express");
 import ControllerContainer from "./ControllerContainer";
 
 export default class {
+	dependencies: Map<string, any> = null;
 	req: express.Request = null;
 	res: express.Response = null;
 	match: boolean = false;

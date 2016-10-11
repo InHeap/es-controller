@@ -13,9 +13,14 @@ import Route from "./Route";
 export default class {
 	routes: Route[] = new Array<Route>();
 	app: express.Application = null;
+	dependencies: Map<string, any> = new Map<string, any>();
 
 	constructor(app?: express.Application) {
 		this.setApp(app);
+	}
+
+	setDependency(key: string, value: any) {
+		this.dependencies.set(key, value);
 	}
 
 	public setApp(app?: express.Application) {
@@ -82,6 +87,7 @@ export default class {
 			let route: Route = that.routes[i];
 			let reqCon: RequestContainer = route.match(req);
 			if (reqCon.match) {
+				reqCon.dependencies = that.dependencies;
 				await route.handle(req, res, reqCon);
 				break;
 			}

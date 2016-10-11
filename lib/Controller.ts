@@ -12,6 +12,10 @@ export default class {
 		this.reqCon = reqCon;
 	}
 
+	getDependency(key: string): any {
+		return this.reqCon.dependencies.get(key);
+	}
+
 	constructor() { }
 
 	protected view(args?: any, viewName?: string): View {

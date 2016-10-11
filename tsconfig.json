@@ -4,7 +4,8 @@
 		"module": "commonjs",
 		"sourceMap": false,
 		"allowSyntheticDefaultImports": true,
-		"removeComments": true
+		"removeComments": true,
+		"experimentalDecorators": true
 	},
 	"exclude": [
 		"typings",

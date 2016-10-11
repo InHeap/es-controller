@@ -3,6 +3,8 @@ import * as es from "./../../index";
 // Will set Controller Name as "Home"
 export class Home extends es.Controller {
 
+	@es.Decorators.Inject("Context")
+	context:string=null;
 	// Will be translated to get("/Home/index") (HTTP-method is extracted by first item in function name)
 	get_index() {
 		return this.view({
