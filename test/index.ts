@@ -19,11 +19,9 @@ app.set('views', __dirname + '/views');
 // defaults.set("action", null);
 // defaults.set("id", null);
 
-var router = es.router;
+var router = new es.Router(app);
 router.load(__dirname + "/config.json", __dirname);
 // router.add("Default", "/{controller}/{action}", __dirname + "/Controller", defaults, false);
-
-app.use(es.handler);
 
 app.listen(3000, function () {
 	console.log('Example app listening on port 3000!');

@@ -1,12 +1,31 @@
 /// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/globals/express/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/globals/express-serve-static-core/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/globals/serve-static/index.d.ts" />
+
 
 import fs = require("fs");
+import express = require("express");
+
+import RequestContainer from "./RequestContainer";
 import Route from "./Route";
 
 export default class {
 	routes: Route[] = new Array<Route>();
+	app: express.Application = null;
 
-	constructor() { }
+	constructor(app?: express.Application) {
+		this.setApp(app);
+	}
+
+	public setApp(app?: express.Application) {
+		if (app) {
+			this.app = app;
+			app.set("Router", this);
+			app.use(this.handler);
+		}
+	}
+
 
 	public add(name: string, template: string, dir: string, defaults: Map<string, string>, includeSubDir: boolean): void {
 		let route = new Route(name, template, dir, defaults, includeSubDir);
@@ -54,6 +73,20 @@ export default class {
 				this.addRoute(obj, baseDir);
 			}
 		});
+	}
+
+	public async handler(req: express.Request, res: express.Response, next: express.NextFunction): Promise<any> {
+		let app = req.app
+		let that: this = app.get("Router");
+		for (let i = 0; i < that.routes.length; i++) {
+			let route: Route = that.routes[i];
+			let reqCon: RequestContainer = route.match(req);
+			if (reqCon.match) {
+				await route.handle(req, res, reqCon);
+				break;
+			}
+		}
+		next();
 	}
 
 }

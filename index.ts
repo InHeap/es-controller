@@ -2,9 +2,8 @@
 
 import Controller from "./lib/Controller";
 import Route from "./lib/Route";
-import handler, { router } from "./lib/handler";
+import Router from "./lib/Router";
 
 export { Controller };
 export { Route };
-export { router };
-export { handler };
+export { Router };
