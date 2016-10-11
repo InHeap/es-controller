@@ -56,7 +56,7 @@ export default class {
 	async handle(reqCon: RequestContainer): Promise<void> {
 		let controller = this.generate();
 		controller.init(reqCon);
-		let result: any = Reflect.apply(reqCon.action, controller, [reqCon.req, reqCon.res]);
+		let result: any = Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
 		if (!result) {
 			reqCon.res.send();
 		} else if (result instanceof View) {
