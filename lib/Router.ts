@@ -47,8 +47,10 @@ export default class {
 
 	objToMap(obj: any): Map<string, any> {
 		let strMap: Map<string, any> = new Map<string, any>();
-		for (let k of Object.keys(obj)) {
-			strMap.set(k, obj[k]);
+		if (obj) {
+			for (let k of Object.keys(obj)) {
+				strMap.set(k, obj[k]);
+			}
 		}
 		return strMap;
 	}
