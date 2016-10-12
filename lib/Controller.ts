@@ -13,7 +13,11 @@ export default class {
 	}
 
 	getDependency(key: string): any {
-		return this.reqCon.dependencies.get(key);
+		if (this.reqCon && this.reqCon.dependencies) {
+			return this.reqCon.dependencies.get(key);
+		} else {
+			return null;
+		}
 	}
 
 	constructor() { }
