@@ -23,6 +23,11 @@ var router = new es.Router(app);
 router.load(__dirname + "/config.json", __dirname);
 // router.add("Default", "/{controller}/{action}", __dirname + "/Controller", defaults, false);
 
+app.use([function (err, req, res, next) {
+	console.error(err);
+	res.status(500).send('Something broke!');
+}]);
+
 app.listen(3000, function () {
 	console.log('Example app listening on port 3000!');
 });

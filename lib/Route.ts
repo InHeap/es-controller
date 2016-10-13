@@ -145,7 +145,7 @@ export default class {
     return reqCon;
   }
 
-  async handle(req: express.Request, res: express.Response, reqCon: RequestContainer): Promise<any> {
+  public async handle(req: express.Request, res: express.Response, reqCon: RequestContainer): Promise<any> {
     reqCon.req = req;
     reqCon.res = res;
     // Setting Request Parameters
@@ -157,7 +157,6 @@ export default class {
         req.params[x] = this.defaults.get(x);
       }
     }
-
     return await reqCon.controller.handle(reqCon);
   }
 

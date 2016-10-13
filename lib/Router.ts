@@ -14,6 +14,7 @@ export default class {
 	routes: Route[] = new Array<Route>();
 	app: express.Application = null;
 	dependencies: Map<string, any> = new Map<string, any>();
+	filters: Array<express.RequestHandler> = new Array();
 
 	constructor(app?: express.Application) {
 		this.setApp(app);
@@ -85,16 +86,20 @@ export default class {
 	public async handler(req: express.Request, res: express.Response, next: express.NextFunction): Promise<any> {
 		let app = req.app
 		let that: this = app.get("Router");
-		for (let i = 0; i < that.routes.length; i++) {
-			let route: Route = that.routes[i];
-			let reqCon: RequestContainer = route.match(req);
-			if (reqCon.match) {
-				reqCon.dependencies = that.dependencies;
-				await route.handle(req, res, reqCon);
-				break;
+		try {
+			for (let i = 0; i < that.routes.length; i++) {
+				let route: Route = that.routes[i];
+				let reqCon: RequestContainer = route.match(req);
+				if (reqCon.match) {
+					reqCon.dependencies = that.dependencies;
+					await route.handle(req, res, reqCon);
+					break;
+				}
 			}
+			next();
+		} catch (e) {
+			next(e);
 		}
-		next();
 	}
 
 }
