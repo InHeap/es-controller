@@ -95,11 +95,11 @@ export default class {
           if (param && param !== "controller" && param !== "action") {
             this.templateParams.push(param);
           }
-          if (this.defaults.has(param)) {
-            urlregexStr += "/*" + xregexp.replace(word, this.templateregex, "(?<${identifier}>\\w*)");
-          } else {
-            urlregexStr += "/*" + xregexp.replace(word, this.templateregex, "(?<${identifier}>\\w+)");
-          }
+          // if (this.defaults.has(param)) {
+          urlregexStr += "/*" + xregexp.replace(word, this.templateregex, "(?<${identifier}>\\w*)");
+          // } else {
+          // urlregexStr += "/*" + xregexp.replace(word, this.templateregex, "(?<${identifier}>\\w+)");
+          // }
         } else {
           urlregexStr += "/" + word;
         }
