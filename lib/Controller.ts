@@ -6,26 +6,21 @@ import RequestContainer from "./RequestContainer";
 
 export default class {
 	reqCon: RequestContainer = null;
-	filters: Array<express.RequestHandler> = new Array();
 
-	init(reqCon: RequestContainer): void {
-		this.reqCon = reqCon;
+	$init(): void {
 	}
 
-	getDependency(key: string): any {
-		if (this.reqCon && this.reqCon.dependencies) {
-			return this.reqCon.dependencies.get(key);
+	$get(key: string): any {
+		if (this.reqCon) {
+			return this.reqCon.get(key.toLowerCase());
 		} else {
 			return null;
 		}
 	}
 
-	constructor() { }
-
-	protected view(args?: any, viewName?: string): View {
+	protected $view(args?: any, viewName?: string): View {
 		return new View(viewName, args);
 	}
-
 }
 
 export class View {

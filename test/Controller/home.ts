@@ -5,7 +5,7 @@ export class Home extends es.Controller {
 
 	// Will be translated to get("/Home/index") (HTTP-method is extracted by first item in function name)
 	get_index() {
-		return this.view({
+		return this.$view({
 			title: "Title",
 			message: "Hello"
 		});

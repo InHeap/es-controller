@@ -2,7 +2,7 @@
 const es = require("./../../index");
 class Home extends es.Controller {
     get_index() {
-        return this.view({
+        return this.$view({
             title: "Title",
             message: "Hello"
         });

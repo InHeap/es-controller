@@ -29,7 +29,7 @@ export default class {
 
 		let keys: (string | number | symbol)[] = Reflect.ownKeys(controller.prototype);
 		keys.forEach((k) => {
-			if (k && k !== "constructor") {
+			if (k && k !== "constructor" && !(<string>k).startsWith('$')) {
 				let o = Reflect.get(c, k);
 				if (typeof o === "function") {
 					this.actionMap.set(k.toString().toLowerCase(), o);
@@ -54,9 +54,12 @@ export default class {
 	}
 
 	async handle(reqCon: RequestContainer): Promise<void> {
-		let controller = this.generate();
-		controller.init(reqCon);
 		Object.assign(reqCon.req.params, reqCon.req.query);
+		reqCon.set('request', reqCon.req);
+		reqCon.set('response', reqCon.res);
+		let controller = this.generate();
+		controller.reqCon = reqCon;
+		controller.$init();
 		let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
 		if (!result) {
 			reqCon.res.send();

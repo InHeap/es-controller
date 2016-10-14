@@ -14,4 +14,12 @@ export default class {
 	controller: ControllerContainer = null;
 	actionName: string = "";
 	action: any = null;
+
+	get(key: string) {
+		return this.dependencies.get(key.toLowerCase());
+	}
+
+	set(key: string, value:any) {
+		return this.dependencies.get(key.toLowerCase());
+	}
 }
