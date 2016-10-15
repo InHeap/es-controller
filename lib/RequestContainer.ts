@@ -19,7 +19,7 @@ export default class {
 		return this.dependencies.get(key.toLowerCase());
 	}
 
-	set(key: string, value:any) {
-		return this.dependencies.get(key.toLowerCase());
+	set(key: string, value: any) {
+		this.dependencies.set(key.toLowerCase(), value);
 	}
 }

@@ -20,8 +20,8 @@ export default class {
 		this.setApp(app);
 	}
 
-	setDependency(key: string, value: any) {
-		this.dependencies.set(key, value);
+	public set(key: string, value: any) {
+		this.dependencies.set(key.toLowerCase(), value);
 	}
 
 	public setApp(app?: express.Application) {
