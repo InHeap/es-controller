@@ -3,9 +3,12 @@
 
 import express = require("express");
 import ControllerContainer from "./ControllerContainer";
+import Router from "./Router";
+import DependencyContainer from "./DependencyContainer";
 
 export default class {
-	dependencies: Map<string, any> = null;
+	router: Router = null;
+	dependencies: DependencyContainer = new DependencyContainer();
 	req: express.Request = null;
 	res: express.Response = null;
 	match: boolean = false;
@@ -15,8 +18,15 @@ export default class {
 	actionName: string = "";
 	action: any = null;
 
-	get(key: string) {
-		return this.dependencies.get(key.toLowerCase());
+	get(key: any): any {
+		if (typeof key === 'string') {
+			key = key.toLowerCase();
+		}
+		let res = this.dependencies.get(key);
+		if (!res) {
+			res = this.router.get(key);
+		}
+		return res;
 	}
 
 	set(key: string, value: any) {

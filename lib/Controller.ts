@@ -12,7 +12,7 @@ export default class {
 
 	$get(key: string): any {
 		if (this.reqCon) {
-			return this.reqCon.get(key.toLowerCase());
+			return this.reqCon.get(key);
 		} else {
 			return null;
 		}

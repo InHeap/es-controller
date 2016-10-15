@@ -9,27 +9,33 @@ import express = require("express");
 
 import RequestContainer from "./RequestContainer";
 import Route from "./Route";
+import DependencyContainer from "./DependencyContainer";
 
 export default class {
 	routes: Route[] = new Array<Route>();
 	app: express.Application = null;
-	dependencies: Map<string, any> = new Map<string, any>();
+
+	dependencies: DependencyContainer = new DependencyContainer();
 	filters: Array<express.RequestHandler> = new Array();
 
 	constructor(app?: express.Application) {
-		this.setApp(app);
-	}
-
-	public set(key: string, value: any) {
-		this.dependencies.set(key.toLowerCase(), value);
-	}
-
-	public setApp(app?: express.Application) {
 		if (app) {
-			this.app = app;
-			app.set("Router", this);
-			app.use(this.handler);
+			this.setApp(app);
 		}
+	}
+
+	public set(key: any, value: any) {
+		this.dependencies.set(key, value);
+	}
+
+	public get(key: any) {
+		return this.dependencies.get(key);
+	}
+
+	public setApp(app: express.Application) {
+		this.app = app;
+		app.set("Router", this);
+		app.use(this.handler);
 	}
 
 
@@ -91,7 +97,7 @@ export default class {
 				let route: Route = that.routes[i];
 				let reqCon: RequestContainer = route.match(req);
 				if (reqCon.match) {
-					reqCon.dependencies = that.dependencies;
+					reqCon.router = that;
 					await route.handle(req, res, reqCon);
 					break;
 				}
