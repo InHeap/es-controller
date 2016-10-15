@@ -9,7 +9,7 @@ interface IClassFactory<T> {
 }
 
 class DependencyContainer {
-  instanceMap: Map<string, any> = null;
+  instanceMap: Map<string, any> = new Map<string, any>();
 
   generate(constructor: IClass<any>, args: any) {
     function F(): void {

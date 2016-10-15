@@ -19,10 +19,10 @@ export default class {
 	action: any = null;
 
 	get(key: any): any {
+		let res: any = null;
 		if (typeof key === 'string') {
-			key = key.toLowerCase();
+			res = this.dependencies.get(key.toLowerCase());
 		}
-		let res = this.dependencies.get(key);
 		if (!res) {
 			res = this.router.get(key);
 		}
