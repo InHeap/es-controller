@@ -1,10 +1,8 @@
-/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/express/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/mustache/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/index.d.ts" />
 /// <reference path="./../index.ts" />
 
-import express = require("express");
-import es = require("./../index");
+import * as express from "express";
+import * as es from "./../index";
 
 /*app.get('/', function(req, res) {
     res.send('Hello World!');
@@ -20,6 +18,11 @@ app.set('views', __dirname + '/views');
 // defaults.set("id", null);
 
 var router = new es.Router(app);
+router.filters.push((req, res, next) => {
+	res.setHeader("testing", "Success");
+	next();
+});
+
 router.load(__dirname + "/config.json", __dirname);
 // router.add("Default", "/{controller}/{action}", __dirname + "/Controller", defaults, false);
 

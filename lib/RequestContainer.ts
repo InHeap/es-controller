@@ -1,8 +1,8 @@
-/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/express/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/index.d.ts" />
 
-import express = require("express");
+import * as express from "express";
 import ControllerContainer from "./ControllerContainer";
+import Controller from "./Controller";
 import Router from "./Router";
 import DependencyContainer from "./DependencyContainer";
 
@@ -14,7 +14,8 @@ export default class {
 	match: boolean = false;
 	parts: RegExpExecArray = null;
 	controllerName: string = "";
-	controller: ControllerContainer = null;
+	controllerContainer: ControllerContainer = null;
+	controller: Controller = null;
 	actionName: string = "";
 	action: any = null;
 

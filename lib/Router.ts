@@ -1,19 +1,14 @@
-/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/express/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/express-serve-static-core/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/serve-static/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/index.d.ts" />
 
-
-import fs = require("fs");
-import express = require("express");
+import * as fs from "fs";
+import * as express from "express";
 
 import RequestContainer from "./RequestContainer";
 import Route from "./Route";
 import DependencyContainer from "./DependencyContainer";
 
-export default class {
+export default class Router {
 	routes: Route[] = new Array<Route>();
-	app: express.Application = null;
 
 	dependencies: DependencyContainer = new DependencyContainer();
 	filters: Array<express.RequestHandler> = new Array();
@@ -33,7 +28,6 @@ export default class {
 	}
 
 	public setApp(app: express.Application) {
-		this.app = app;
 		app.set("Router", this);
 		app.use(this.handler);
 	}
@@ -89,6 +83,28 @@ export default class {
 		});
 	}
 
+	async executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
+		let fnc: express.RequestHandler = null;
+		let nxt: express.NextFunction = null;
+		if (!index) {
+			index = 0;
+		}
+		if (this.filters.length && this.filters.length > index) {
+			fnc = this.filters[index];
+			nxt = async (err?: any) => {
+				if (err)
+					throw err;
+				await this.executeNext(reqCon, next, index + 1);
+			};
+		} else {
+			fnc = async (req, res, next) => {
+				await next();
+			};
+			nxt = next;
+		}
+		return await fnc(reqCon.req, reqCon.res, nxt);
+	}
+
 	public async handler(req: express.Request, res: express.Response, next: express.NextFunction): Promise<any> {
 		let app = req.app
 		let that: this = app.get("Router");
@@ -98,13 +114,20 @@ export default class {
 				let reqCon: RequestContainer = route.match(req);
 				if (reqCon.match) {
 					reqCon.router = that;
-					await route.handle(req, res, reqCon);
+					reqCon.req = req;
+					reqCon.res = res;
+					let func = async (err?: any) => {
+						if (err)
+							throw err;
+						await route.handle(reqCon);
+					}
+					await that.executeNext(reqCon, func);
 					break;
 				}
 			}
 			next();
-		} catch (e) {
-			next(e);
+		} catch (err) {
+			next(err);
 		}
 	}
 

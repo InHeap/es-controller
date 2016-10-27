@@ -1,20 +1,15 @@
-/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/express/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/express-serve-static-core/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/serve-static/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/mime/index.d.ts"" />
-/// <reference path="/usr/local/lib/typings/globals/xregexp/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/index.d.ts" />
 
-import fs = require("fs");
-import path = require("path");
-import express = require("express");
-import xregexp = require("xregexp");
+import * as fs from "fs";
+import * as path from "path";
+import * as express from "express";
+import * as xregexp from "xregexp";
 
 import Controller from "./Controller";
 import ControllerContainer, { IClass } from "./ControllerContainer";
 import RequestContainer from "./RequestContainer";
 
-export default class {
+export default class Route {
   name: string;
   template: string;
   dir: string;
@@ -60,6 +55,7 @@ export default class {
       if (t instanceof Controller) {
         let c = new ControllerContainer();
         c.bind(controller);
+        controllerName = controllerName.replace('Controller', '')
         this.controllerMap.set(controllerName.toLowerCase(), c);
       }
     }
@@ -124,9 +120,9 @@ export default class {
       reqCon.controllerName = this.defaults.get("controller");
     }
     if (reqCon.controllerName) {
-      reqCon.controller = this.controllerMap.get(reqCon.controllerName.toLowerCase());
+      reqCon.controllerContainer = this.controllerMap.get(reqCon.controllerName.toLowerCase());
     }
-    if (!reqCon.controller) {
+    if (!reqCon.controllerContainer) {
       return reqCon;
     }
 
@@ -136,7 +132,7 @@ export default class {
     } else if (this.defaults.get("action")) {
       reqCon.actionName = this.defaults.get("action");
     }
-    reqCon.action = reqCon.controller.getAction(req.method, reqCon.actionName);
+    reqCon.action = reqCon.controllerContainer.getAction(req.method, reqCon.actionName);
     if (!reqCon.action) {
       return reqCon;
     }
@@ -145,19 +141,44 @@ export default class {
     return reqCon;
   }
 
-  public async handle(req: express.Request, res: express.Response, reqCon: RequestContainer): Promise<any> {
-    reqCon.req = req;
-    reqCon.res = res;
+  async executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
+    let fnc: express.RequestHandler = null;
+    let nxt: express.NextFunction = null;
+    if (!index) {
+      index = 0;
+    }
+    if (this.filters.length && this.filters.length > index) {
+      fnc = this.filters[index];
+      nxt = async (err?: any) => {
+        if (err)
+          throw err;
+        await this.executeNext(reqCon, next, index + 1);
+      };
+    } else {
+      fnc = async (req, res, next) => {
+        await next();
+      };
+      nxt = next;
+    }
+    return await fnc(reqCon.req, reqCon.res, nxt);
+  }
+
+  public async handle(reqCon: RequestContainer): Promise<any> {
     // Setting Request Parameters
     for (let i = 0; i < this.templateParams.length; i++) {
       let x = this.templateParams[i];
       if (reqCon.parts[x]) {
-        req.params[x] = reqCon.parts[x];
+        reqCon.req.params[x] = reqCon.parts[x];
       } else {
-        req.params[x] = this.defaults.get(x);
+        reqCon.req.params[x] = this.defaults.get(x);
       }
     }
-    return await reqCon.controller.handle(reqCon);
+    let func = async (err?: any) => {
+      if (err)
+        throw err;
+      return await reqCon.controllerContainer.handle(reqCon);
+    }
+    await this.executeNext(reqCon, func);
   }
 
 }

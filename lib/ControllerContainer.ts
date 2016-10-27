@@ -1,9 +1,8 @@
-/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
-/// <reference path="/usr/local/lib/typings/globals/express/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/index.d.ts" />
 
-import express = require("express");
+import * as express from "express";
 
-import Controller, { View } from "./Controller";
+import Controller, { View, Response } from "./Controller";
 import RequestContainer from "./RequestContainer";
 
 export interface IClass<T> {
@@ -14,7 +13,7 @@ interface IControllerFactory {
 	(): Controller;
 }
 
-export default class {
+export default class ControllerContainer {
 
 	name: string;
 
@@ -53,29 +52,61 @@ export default class {
 		return action;
 	}
 
+	async executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
+		let fnc: express.RequestHandler = null;
+		let nxt: express.NextFunction = null;
+		if (!index) {
+			index = 0;
+		}
+		if (reqCon.controller.filters.length && reqCon.controller.filters.length > index) {
+			fnc = reqCon.controller.filters[index];
+			nxt = async (err?: any) => {
+				if (err)
+					throw err;
+				await this.executeNext(reqCon, next, index + 1);
+			};
+		} else {
+			fnc = async (req, res, next) => {
+				await next();
+			};
+			nxt = next;
+		}
+		return await fnc(reqCon.req, reqCon.res, nxt);
+	}
+
 	async handle(reqCon: RequestContainer): Promise<void> {
 		Object.assign(reqCon.req.params, reqCon.req.query);
 		reqCon.set('request', reqCon.req);
 		reqCon.set('response', reqCon.res);
 		let controller = this.generate();
 		controller.reqCon = reqCon;
+		reqCon.controller = controller;
 		controller.$init();
-		let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
-		if (!result) {
-			reqCon.res.send();
-		} else if (result instanceof View) {
-			if (!result.viewName) {
-				result.viewName = reqCon.controllerName + "/" + reqCon.actionName;
+
+		let func = async (err?: any) => {
+			if (err)
+				throw err;
+			let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
+			if (result == null || result === undefined) {
+				reqCon.res.send();
+			} else if (result instanceof View) {
+				if (!result.viewName) {
+					result.viewName = reqCon.controllerName + "/" + reqCon.actionName;
+				}
+				reqCon.res.render(result.viewName, result.args, null);
+			} else if (result instanceof Response) {
+				reqCon.res.status(result.status);
+				reqCon.res.send(result.body);
+			} else if (reqCon.req.accepts("json")) {
+				reqCon.res.json(result);
+			} else if (reqCon.req.accepts("html")) {
+				let viewName = reqCon.controllerName + "/" + reqCon.actionName;
+				reqCon.res.render(viewName, result, null);
+			} else {
+				reqCon.res.send(result);
 			}
-			reqCon.res.render(result.viewName, result.args, null);
-		} else if (reqCon.req.accepts("json")) {
-			reqCon.res.json(result);
-		} else if (reqCon.req.accepts("html")) {
-			let viewName = reqCon.controllerName + "/" + reqCon.actionName;
-			reqCon.res.render(viewName, result, null);
-		} else {
-			reqCon.res.send(result);
 		}
+		await this.executeNext(reqCon, func);
 	}
 
 }

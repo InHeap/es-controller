@@ -1,4 +1,4 @@
-/// <reference path="/usr/local/lib/typings/globals/node/index.d.ts" />
+/// <reference path="/usr/local/lib/typings/index.d.ts" />
 
 interface IClass<T> {
   new (...param: Array<any>): T;
