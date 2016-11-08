@@ -2,7 +2,7 @@
 
 import * as express from "express";
 
-import Controller, { View, Response } from "./Controller";
+import Controller from "./Controller";
 import RequestContainer from "./RequestContainer";
 
 export interface IClass<T> {
@@ -88,15 +88,9 @@ export default class ControllerContainer {
 				throw err;
 			let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
 			if (result == null || result === undefined) {
-				reqCon.res.send();
-			} else if (result instanceof View) {
-				if (!result.viewName) {
-					result.viewName = reqCon.controllerName + "/" + reqCon.actionName;
+				if (!reqCon.res.finished) {
+					reqCon.res.send();
 				}
-				reqCon.res.render(result.viewName, result.args, null);
-			} else if (result instanceof Response) {
-				reqCon.res.status(result.status);
-				reqCon.res.send(result.body);
 			} else if (reqCon.req.accepts("json")) {
 				reqCon.res.json(result);
 			} else if (reqCon.req.accepts("html")) {

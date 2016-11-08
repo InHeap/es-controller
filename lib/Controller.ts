@@ -18,43 +18,20 @@ export default class Controller {
 		}
 	}
 
-	protected $view(args?: any, viewName?: string): View {
-		return new View(viewName, args);
+	protected $view(args?: any, viewName?: string) {
+		if (!viewName) {
+			viewName = this.reqCon.controllerName + "/" + this.reqCon.actionName;
+		}
+		this.reqCon.res.render(viewName, args, null);
 	}
 
 	protected $response(response?: any, status?: number) {
-		return new Response(status, response)
+		status = status ? status : 200;
+		this.reqCon.res.status(status);
+		this.reqCon.res.send(response);
 	}
 
-	protected $accept(response?: any, status?: number) {
-		if (!status)
-			status = 200;
-		return new Response(status, response)
-	}
-
-	protected $reject(response?: any, status?: number) {
-		if (!status)
-			status = 400;
-		return new Response(status, response)
-	}
-}
-
-export class View {
-	viewName: string = "";
-	args: any = null;
-
-	constructor(viewName?: string, args?: any) {
-		this.viewName = viewName;
-		this.args = args;
-	}
-}
-
-export class Response {
-	status: number = 200;
-	body: any = null;
-
-	constructor(status?: number, body?: any) {
-		this.status = status;
-		this.body = body;
+	protected $redirect(url: string, status?: number) {
+		this.reqCon.res.redirect(url, status);
 	}
 }
