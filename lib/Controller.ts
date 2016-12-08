@@ -5,7 +5,7 @@ import RequestContainer from "./RequestContainer";
 
 export default class Controller {
 	reqCon: RequestContainer = null;
-	filters: Array<express.RequestHandler> = new Array();
+	// filters: Array<express.RequestHandler> = new Array();
 
 	$init(): void {
 	}
@@ -32,6 +32,7 @@ export default class Controller {
 	}
 
 	protected $redirect(url: string, status?: number) {
-		this.reqCon.res.redirect(url, status);
+		status = status ? status : 302;
+		this.reqCon.res.redirect(status, url);
 	}
 }

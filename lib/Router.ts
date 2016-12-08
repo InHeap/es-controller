@@ -11,7 +11,7 @@ export default class Router {
 	routes: Route[] = new Array<Route>();
 
 	dependencies: DependencyContainer = new DependencyContainer();
-	filters: Array<express.RequestHandler> = new Array();
+	// filters: Array<express.RequestHandler> = new Array();
 
 	constructor(app?: express.Application) {
 		if (app) {
@@ -83,27 +83,27 @@ export default class Router {
 		});
 	}
 
-	async executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
-		let fnc: express.RequestHandler = null;
-		let nxt: express.NextFunction = null;
-		if (!index) {
-			index = 0;
-		}
-		if (this.filters.length && this.filters.length > index) {
-			fnc = this.filters[index];
-			nxt = async (err?: any) => {
-				if (err)
-					throw err;
-				await this.executeNext(reqCon, next, index + 1);
-			};
-		} else {
-			fnc = async (req, res, next) => {
-				await next();
-			};
-			nxt = next;
-		}
-		return await fnc(reqCon.req, reqCon.res, nxt);
-	}
+	// async executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
+	// 	let fnc: express.RequestHandler = null;
+	// 	let nxt: express.NextFunction = null;
+	// 	if (!index) {
+	// 		index = 0;
+	// 	}
+	// 	if (this.filters.length && this.filters.length > index) {
+	// 		fnc = this.filters[index];
+	// 		nxt = async (err?: any) => {
+	// 			if (err)
+	// 				throw err;
+	// 			await this.executeNext(reqCon, next, index + 1);
+	// 		};
+	// 	} else {
+	// 		fnc = async (req, res, next) => {
+	// 			await next();
+	// 		};
+	// 		nxt = next;
+	// 	}
+	// 	return await fnc(reqCon.req, reqCon.res, nxt);
+	// }
 
 	public async handler(req: express.Request, res: express.Response, next: express.NextFunction): Promise<any> {
 		let app = req.app
@@ -116,12 +116,12 @@ export default class Router {
 					reqCon.router = that;
 					reqCon.req = req;
 					reqCon.res = res;
-					let func = async (err?: any) => {
-						if (err)
-							throw err;
-						await route.handle(reqCon);
-					}
-					await that.executeNext(reqCon, func);
+					// let func = async (err?: any) => {
+					// 	if (err)
+					// 		throw err;
+					await route.handle(reqCon);
+					// }
+					// await that.executeNext(reqCon, func);
 					break;
 				}
 			}

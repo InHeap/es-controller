@@ -52,27 +52,27 @@ export default class ControllerContainer {
 		return action;
 	}
 
-	async executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
-		let fnc: express.RequestHandler = null;
-		let nxt: express.NextFunction = null;
-		if (!index) {
-			index = 0;
-		}
-		if (reqCon.controller.filters.length && reqCon.controller.filters.length > index) {
-			fnc = reqCon.controller.filters[index];
-			nxt = async (err?: any) => {
-				if (err)
-					throw err;
-				await this.executeNext(reqCon, next, index + 1);
-			};
-		} else {
-			fnc = async (req, res, next) => {
-				await next();
-			};
-			nxt = next;
-		}
-		return await fnc(reqCon.req, reqCon.res, nxt);
-	}
+	// executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
+	// 	let fnc: express.RequestHandler = null;
+	// 	let nxt: express.NextFunction = null;
+	// 	if (!index) {
+	// 		index = 0;
+	// 	}
+	// 	if (reqCon.controller.filters.length && reqCon.controller.filters.length > index) {
+	// 		fnc = reqCon.controller.filters[index];
+	// 		nxt = (err?: any) => {
+	// 			if (err)
+	// 				throw err;
+	// 			this.executeNext(reqCon, next, index + 1);
+	// 		};
+	// 	} else {
+	// 		fnc = (req, res, next) => {
+	// 			next();
+	// 		};
+	// 		nxt = next;
+	// 	}
+	// 	return fnc(reqCon.req, reqCon.res, nxt);
+	// }
 
 	async handle(reqCon: RequestContainer): Promise<void> {
 		Object.assign(reqCon.req.params, reqCon.req.query);
@@ -81,26 +81,25 @@ export default class ControllerContainer {
 		let controller = this.generate();
 		controller.reqCon = reqCon;
 		reqCon.controller = controller;
-		controller.$init();
 
-		let func = async (err?: any) => {
-			if (err)
-				throw err;
-			let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
-			if (result == null || result === undefined) {
-				if (!reqCon.res.finished) {
-					reqCon.res.send();
-				}
-			} else if (reqCon.req.accepts("json")) {
-				reqCon.res.json(result);
-			} else if (reqCon.req.accepts("html")) {
-				let viewName = reqCon.controllerName + "/" + reqCon.actionName;
-				reqCon.res.render(viewName, result, null);
-			} else {
-				reqCon.res.send(result);
-			}
+		// let func = async (err?: any) => {
+		// 	if (err)
+		// 		throw err;
+
+		controller.$init();
+		let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
+		if (result == null || result === undefined) {
+			// Do nothing and pass to next function
+		} else if (reqCon.req.accepts("json")) {
+			reqCon.res.json(result);
+		} else if (reqCon.req.accepts("html")) {
+			let viewName = reqCon.controllerName + "/" + reqCon.actionName;
+			reqCon.res.render(viewName, result, null);
+		} else {
+			reqCon.res.send(result);
 		}
-		await this.executeNext(reqCon, func);
+		// }
+		// await this.executeNext(reqCon, func);
 	}
 
 }

@@ -15,7 +15,7 @@ export default class Route {
   dir: string;
   defaults: Map<string, string>;
   includeSubDir: boolean;
-  filters: Array<express.RequestHandler> = new Array();
+  // filters: Array<express.RequestHandler> = new Array();
 
   private regex: string;
   private templateParams: Array<string> = new Array<string>();
@@ -42,6 +42,9 @@ export default class Route {
         let keys: (string | number | symbol)[] = Reflect.ownKeys(m);
         keys.forEach((k: (string | number | symbol)) => {
           let c = Reflect.get(m, k);
+          if (k === 'default') {
+            k = filename.match(/(?!.*\/|\\)(\w*)/g)[0];
+          }
           this.bindController(k.toString(), c);
         });
       }
@@ -141,27 +144,27 @@ export default class Route {
     return reqCon;
   }
 
-  async executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
-    let fnc: express.RequestHandler = null;
-    let nxt: express.NextFunction = null;
-    if (!index) {
-      index = 0;
-    }
-    if (this.filters.length && this.filters.length > index) {
-      fnc = this.filters[index];
-      nxt = async (err?: any) => {
-        if (err)
-          throw err;
-        await this.executeNext(reqCon, next, index + 1);
-      };
-    } else {
-      fnc = async (req, res, next) => {
-        await next();
-      };
-      nxt = next;
-    }
-    return await fnc(reqCon.req, reqCon.res, nxt);
-  }
+  // async executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
+  //   let fnc: express.RequestHandler = null;
+  //   let nxt: express.NextFunction = null;
+  //   if (!index) {
+  //     index = 0;
+  //   }
+  //   if (this.filters.length && this.filters.length > index) {
+  //     fnc = this.filters[index];
+  //     nxt = async (err?: any) => {
+  //       if (err)
+  //         throw err;
+  //       await this.executeNext(reqCon, next, index + 1);
+  //     };
+  //   } else {
+  //     fnc = async (req, res, next) => {
+  //       await next();
+  //     };
+  //     nxt = next;
+  //   }
+  //   return await fnc(reqCon.req, reqCon.res, nxt);
+  // }
 
   public async handle(reqCon: RequestContainer): Promise<any> {
     // Setting Request Parameters
@@ -173,12 +176,12 @@ export default class Route {
         reqCon.req.params[x] = this.defaults.get(x);
       }
     }
-    let func = async (err?: any) => {
-      if (err)
-        throw err;
-      return await reqCon.controllerContainer.handle(reqCon);
-    }
-    await this.executeNext(reqCon, func);
+    // let func = async (err?: any) => {
+    //   if (err)
+    //     throw err;
+    return await reqCon.controllerContainer.handle(reqCon);
+    // }
+    // await this.executeNext(reqCon, func);
   }
 
 }
