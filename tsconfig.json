@@ -6,7 +6,11 @@
 		"sourceMap": false,
 		"allowSyntheticDefaultImports": true,
 		"removeComments": true,
-		"experimentalDecorators": true
+		"experimentalDecorators": true,
+		"typeRoots": [
+			"./typings/globals/",
+			"./typings/modules/"
+		]
 	},
 	"exclude": [
 		"typings",
