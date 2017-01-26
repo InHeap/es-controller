@@ -1,5 +1,3 @@
-/// <reference path="/usr/local/lib/typings/index.d.ts" />
-
 import * as express from "express";
 import RequestContainer from "./RequestContainer";
 

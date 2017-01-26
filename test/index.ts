@@ -1,4 +1,3 @@
-/// <reference path="/usr/local/lib/typings/index.d.ts" />
 /// <reference path="./../index.ts" />
 
 import * as express from "express";
@@ -18,10 +17,10 @@ app.set('views', __dirname + '/views');
 // defaults.set("id", null);
 
 var router = new es.Router(app);
-router.filters.push((req, res, next) => {
-	res.setHeader("testing", "Success");
-	next();
-});
+// router.filters.push((req, res, next) => {
+// 	res.setHeader("testing", "Success");
+// 	next();
+// });
 
 router.load(__dirname + "/config.json", __dirname);
 // router.add("Default", "/{controller}/{action}", __dirname + "/Controller", defaults, false);

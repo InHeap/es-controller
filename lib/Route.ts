@@ -1,5 +1,3 @@
-/// <reference path="/usr/local/lib/typings/index.d.ts" />
-
 import * as fs from "fs";
 import * as path from "path";
 import * as express from "express";

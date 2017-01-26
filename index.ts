@@ -1,4 +1,4 @@
-/// <reference path="/usr/local/lib/typings/index.d.ts" />
+/// <reference path="./typings/index.d.ts" />
 
 import Controller from "./lib/Controller";
 import Route from "./lib/Route";
