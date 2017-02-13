@@ -26,10 +26,10 @@ export default class ControllerContainer {
 
 		let keys: (string | number | symbol)[] = Reflect.ownKeys(controller.prototype);
 		keys.forEach((k) => {
-			if (k && k !== "constructor" && !(<string>k).startsWith('$')) {
+			if (k && (<string>k).startsWith('$')) {
 				let o = Reflect.get(c, k);
 				if (typeof o === "function") {
-					this.actionMap.set(k.toString().toLowerCase(), o);
+					this.actionMap.set(k.toString().substring(1).toLowerCase(), o);
 				}
 			}
 		});
@@ -40,12 +40,12 @@ export default class ControllerContainer {
 		let action: any = null;
 		if (actionName) {
 			actionName = actionName.toLowerCase();
-			action = this.actionMap.get(method + "_" + actionName);
+			action = this.actionMap.get('$' + method + "_" + actionName);
 			if (!action) {
-				action = this.actionMap.get(actionName);
+				action = this.actionMap.get('$' + actionName);
 			}
 		} else {
-			action = this.actionMap.get(method);
+			action = this.actionMap.get('$' + method);
 		}
 		return action;
 	}
@@ -84,7 +84,7 @@ export default class ControllerContainer {
 		// 	if (err)
 		// 		throw err;
 
-		controller.$init();
+		controller.init();
 		let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
 		if (result == null || result === undefined) {
 			// Do nothing and pass to next function

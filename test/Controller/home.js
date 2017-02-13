@@ -1,22 +1,22 @@
 "use strict";
 const es = require("./../../index");
 class Home extends es.Controller {
-    get_index() {
-        return this.$view({
+    $get_index() {
+        return this.view({
             title: "Title",
             message: "Hello"
         });
     }
-    index() {
+    $index() {
         return "Returning Index request for all methods";
     }
-    get() {
+    $get() {
         return {
             title: "Title",
             message: "Hello"
         };
     }
-    post() {
+    $post() {
         throw "hello";
     }
 }
