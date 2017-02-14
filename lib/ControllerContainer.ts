@@ -40,12 +40,12 @@ export default class ControllerContainer {
 		let action: any = null;
 		if (actionName) {
 			actionName = actionName.toLowerCase();
-			action = this.actionMap.get('$' + method + "_" + actionName);
+			action = this.actionMap.get(method + "_" + actionName);
 			if (!action) {
-				action = this.actionMap.get('$' + actionName);
+				action = this.actionMap.get(actionName);
 			}
 		} else {
-			action = this.actionMap.get('$' + method);
+			action = this.actionMap.get(method);
 		}
 		return action;
 	}
