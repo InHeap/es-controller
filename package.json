@@ -2,8 +2,8 @@
   "name": "es-controller",
   "version": "1.0.40",
   "description": "Controller framework for Nodejs supporting es6",
-  "main": "index.js",
-  "types": "index.ts",
+  "main": "./dist/index.js",
+  "types": "./src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
