@@ -40,7 +40,7 @@ class ControllerContainer {
         let controller = this.generate();
         controller.reqCon = reqCon;
         reqCon.controller = controller;
-        controller.init();
+        await controller.init();
         let result = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
         if (result == null || result === undefined) {
         }

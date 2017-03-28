@@ -3,7 +3,7 @@ class Controller {
     constructor() {
         this.reqCon = null;
     }
-    init() {
+    async init() {
     }
     get(key) {
         if (this.reqCon) {

@@ -5,7 +5,7 @@ export default class Controller {
 	reqCon: RequestContainer = null;
 	// filters: Array<express.RequestHandler> = new Array();
 
-	init(): void {
+	async init(): Promise<void> {
 	}
 
 	get(key: string): any {

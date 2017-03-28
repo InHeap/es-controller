@@ -84,7 +84,7 @@ export default class ControllerContainer {
 		// 	if (err)
 		// 		throw err;
 
-		controller.init();
+		await controller.init();
 		let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
 		if (result == null || result === undefined) {
 			// Do nothing and pass to next function
