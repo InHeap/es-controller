@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class DependencyContainer {
     constructor() {
         this.instanceMap = new Map();
@@ -43,5 +44,4 @@ class DependencyContainer {
         }
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DependencyContainer;

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
 const xregexp = require("xregexp");
@@ -129,5 +130,4 @@ class Route {
         return await reqCon.controllerContainer.handle(reqCon);
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Route;

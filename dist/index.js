@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Controller_1 = require("./lib/Controller");
 exports.Controller = Controller_1.default;
 const Route_1 = require("./lib/Route");

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const Route_1 = require("./Route");
 const DependencyContainer_1 = require("./DependencyContainer");
@@ -89,5 +90,4 @@ class Router {
         }
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Router;

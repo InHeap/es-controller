@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class ControllerContainer {
     constructor() {
         this.actionMap = new Map();
@@ -56,5 +57,4 @@ class ControllerContainer {
         }
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ControllerContainer;

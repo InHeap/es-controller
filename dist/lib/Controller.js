@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Controller {
     constructor() {
         this.reqCon = null;
@@ -29,5 +30,4 @@ class Controller {
         this.reqCon.res.redirect(status, url);
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Controller;

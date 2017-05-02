@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const DependencyContainer_1 = require("./DependencyContainer");
 class default_1 {
     constructor() {
@@ -28,5 +29,4 @@ class default_1 {
         this.dependencies.set(key.toLowerCase(), value);
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = default_1;

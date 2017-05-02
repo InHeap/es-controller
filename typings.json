@@ -1,12 +1,12 @@
 {
   "globalDependencies": {
-    "node": "registry:dt/node#7.0.0+20170124134802"
+    "node": "registry:dt/node"
   },
   "dependencies": {
-    "express": "registry:dt/express#4.0.0+20170118060322",
-    "express-serve-static-core": "registry:dt/express-serve-static-core#4.0.0+20161228005052",
-    "mime": "registry:dt/mime#0.0.0+20160428043022",
-    "serve-static": "registry:dt/serve-static#1.7.1+20161128184045",
-    "xregexp": "registry:dt/xregexp#3.0.0+20160428043022"
+    "express": "registry:dt/express",
+    "express-serve-static-core": "registry:dt/express-serve-static-core",
+    "mime": "registry:dt/mime",
+    "serve-static": "registry:dt/serve-static",
+    "xregexp": "registry:dt/xregexp"
   }
 }
