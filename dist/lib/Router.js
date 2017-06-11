@@ -3,15 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const Route_1 = require("./Route");
 class Router {
-    constructor(app) {
+    constructor(fileName, baseDir) {
         this.routes = new Array();
-        if (app) {
-            this.setApp(app);
-        }
-    }
-    setApp(app) {
-        app.context.mvc = this;
-        app.use(this.handler);
+        this.load(fileName, baseDir);
     }
     add(name, template, dir, defaults, includeSubDir) {
         let route = new Route_1.default(name, template, dir, defaults, includeSubDir);
@@ -61,13 +55,12 @@ class Router {
         });
     }
     async handler(ctx, nxt) {
-        let that = ctx.mvc;
+        let that = this;
         try {
             for (let i = 0; i < that.routes.length; i++) {
                 let route = that.routes[i];
                 let reqCon = route.match(ctx);
                 if (reqCon) {
-                    reqCon.router = that;
                     reqCon.ctx = ctx;
                     await route.handle(reqCon);
                     break;

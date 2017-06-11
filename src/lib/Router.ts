@@ -11,10 +11,8 @@ export default class Router {
 	// dependencies: DependencyContainer = new DependencyContainer();
 	// filters: Array<express.RequestHandler> = new Array();
 
-	constructor(app?: koa) {
-		if (app) {
-			this.setApp(app);
-		}
+	constructor(fileName: string, baseDir?: string) {
+		this.load(fileName, baseDir);
 	}
 
 	// public set(key: any, value: any) {
@@ -24,11 +22,6 @@ export default class Router {
 	// public get(key: any) {
 	// 	return this.dependencies.get(key);
 	// }
-
-	public setApp(app: koa) {
-		(<koa.BaseContext & { mvc }>app.context).mvc = this;
-		app.use(this.handler);
-	}
 
 
 	public add(name: string, template: string, dir: string, defaults: Map<string, string>, includeSubDir: boolean): void {
@@ -103,14 +96,13 @@ export default class Router {
 	// 	return await fnc(reqCon.req, reqCon.res, nxt);
 	// }
 
-	public async handler(ctx: koa.Context & { mvc }, nxt: Function): Promise<any> {
-		let that = ctx.mvc;
+	public async handler(ctx: koa.Context, nxt: Function): Promise<any> {
+		let that = this;
 		try {
 			for (let i = 0; i < that.routes.length; i++) {
 				let route: Route = that.routes[i];
 				let reqCon: RequestContainer = route.match(ctx);
 				if (reqCon) {
-					reqCon.router = that;
 					reqCon.ctx = ctx;
 					// let func = async (err?: any) => {
 					// 	if (err)

@@ -7,3 +7,10 @@ export { Controller };
 export { Route };
 export { Router };
 export { Decorators };
+
+export default function (fileName: string, baseDir?: string) {
+	let r = new Router(fileName, baseDir);
+	return (ctx, next) => {
+		return r.handler(ctx, next);
+	}
+}

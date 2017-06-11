@@ -8,3 +8,10 @@ const Router_1 = require("./lib/Router");
 exports.Router = Router_1.default;
 const Decorators = require("./lib/Decorators");
 exports.Decorators = Decorators;
+function default_1(fileName, baseDir) {
+    let r = new Router_1.default(fileName, baseDir);
+    return (ctx, next) => {
+        return r.handler(ctx, next);
+    };
+}
+exports.default = default_1;

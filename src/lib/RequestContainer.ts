@@ -6,7 +6,6 @@ import Router from "./Router";
 import DependencyContainer from "./DependencyContainer";
 
 export default class {
-	router: Router = null;
 	// dependencies: DependencyContainer = new DependencyContainer();
 	ctx: koa.Context & { params?, render?} = null;
 	parts: RegExpExecArray = null;
