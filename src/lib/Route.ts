@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import * as express from "express";
+import * as koa from "koa";
 import * as xregexp from "xregexp";
 
 import Controller from "./Controller";
@@ -105,12 +105,12 @@ export default class Route {
     this.reg = xregexp(urlregexStr, "g");
   }
 
-  match(req: express.Request): RequestContainer {
-    let reqCon: RequestContainer = new RequestContainer();
+  match(req: koa.Context): RequestContainer {
+    let reqCon = new RequestContainer();
 
     // Check for template regular expression
     if (!xregexp.test(req.url, this.reg)) {
-      return reqCon;
+      return null;
     }
     reqCon.parts = xregexp.exec(req.url, this.reg);
 
@@ -124,7 +124,7 @@ export default class Route {
       reqCon.controllerContainer = this.controllerMap.get(reqCon.controllerName.toLowerCase());
     }
     if (!reqCon.controllerContainer) {
-      return reqCon;
+      return null;
     }
 
     // Check Action
@@ -135,10 +135,9 @@ export default class Route {
     }
     reqCon.action = reqCon.controllerContainer.getAction(req.method, reqCon.actionName);
     if (!reqCon.action) {
-      return reqCon;
+      return null;
     }
 
-    reqCon.match = true;
     return reqCon;
   }
 
@@ -166,12 +165,13 @@ export default class Route {
 
   public async handle(reqCon: RequestContainer): Promise<any> {
     // Setting Request Parameters
+    reqCon.ctx.params = {};
     for (let i = 0; i < this.templateParams.length; i++) {
       let x = this.templateParams[i];
       if (reqCon.parts[x]) {
-        reqCon.req.params[x] = reqCon.parts[x];
+        reqCon.ctx.params[x] = reqCon.parts[x];
       } else {
-        reqCon.req.params[x] = this.defaults.get(x);
+        reqCon.ctx.params[x] = this.defaults.get(x);
       }
     }
     // let func = async (err?: any) => {

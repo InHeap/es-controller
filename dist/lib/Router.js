@@ -2,23 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const Route_1 = require("./Route");
-const DependencyContainer_1 = require("./DependencyContainer");
 class Router {
     constructor(app) {
         this.routes = new Array();
-        this.dependencies = new DependencyContainer_1.default();
         if (app) {
             this.setApp(app);
         }
     }
-    set(key, value) {
-        this.dependencies.set(key, value);
-    }
-    get(key) {
-        return this.dependencies.get(key);
-    }
     setApp(app) {
-        app.set("Router", this);
+        app.context.mvc = this;
         app.use(this.handler);
     }
     add(name, template, dir, defaults, includeSubDir) {
@@ -68,25 +60,23 @@ class Router {
             }
         });
     }
-    async handler(req, res, next) {
-        let app = req.app;
-        let that = app.get("Router");
+    async handler(ctx, nxt) {
+        let that = ctx.mvc;
         try {
             for (let i = 0; i < that.routes.length; i++) {
                 let route = that.routes[i];
-                let reqCon = route.match(req);
-                if (reqCon.match) {
+                let reqCon = route.match(ctx);
+                if (reqCon) {
                     reqCon.router = that;
-                    reqCon.req = req;
-                    reqCon.res = res;
+                    reqCon.ctx = ctx;
                     await route.handle(reqCon);
                     break;
                 }
             }
-            next();
+            nxt();
         }
         catch (err) {
-            next(err);
+            ctx.throw(err);
         }
     }
 }

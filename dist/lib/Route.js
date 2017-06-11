@@ -89,7 +89,7 @@ class Route {
     match(req) {
         let reqCon = new RequestContainer_1.default();
         if (!xregexp.test(req.url, this.reg)) {
-            return reqCon;
+            return null;
         }
         reqCon.parts = xregexp.exec(req.url, this.reg);
         if (reqCon.parts["controller"]) {
@@ -102,7 +102,7 @@ class Route {
             reqCon.controllerContainer = this.controllerMap.get(reqCon.controllerName.toLowerCase());
         }
         if (!reqCon.controllerContainer) {
-            return reqCon;
+            return null;
         }
         if (reqCon.parts["action"]) {
             reqCon.actionName = reqCon.parts["action"];
@@ -112,19 +112,19 @@ class Route {
         }
         reqCon.action = reqCon.controllerContainer.getAction(req.method, reqCon.actionName);
         if (!reqCon.action) {
-            return reqCon;
+            return null;
         }
-        reqCon.match = true;
         return reqCon;
     }
     async handle(reqCon) {
+        reqCon.ctx.params = {};
         for (let i = 0; i < this.templateParams.length; i++) {
             let x = this.templateParams[i];
             if (reqCon.parts[x]) {
-                reqCon.req.params[x] = reqCon.parts[x];
+                reqCon.ctx.params[x] = reqCon.parts[x];
             }
             else {
-                reqCon.req.params[x] = this.defaults.get(x);
+                reqCon.ctx.params[x] = this.defaults.get(x);
             }
         }
         return await reqCon.controllerContainer.handle(reqCon);

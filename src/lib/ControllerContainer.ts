@@ -1,4 +1,4 @@
-import * as express from "express";
+import * as koa from "koa";
 
 import Controller from "./Controller";
 import RequestContainer from "./RequestContainer";
@@ -73,28 +73,28 @@ export default class ControllerContainer {
 	// }
 
 	async handle(reqCon: RequestContainer): Promise<void> {
-		Object.assign(reqCon.req.params, reqCon.req.query);
-		reqCon.set('request', reqCon.req);
-		reqCon.set('response', reqCon.res);
+		Object.assign(reqCon.ctx.params, reqCon.ctx.query);
+		// reqCon.set('request', reqCon.ctx);
+		// reqCon.set('response', reqCon.res);
 		let controller = this.generate();
 		controller.reqCon = reqCon;
-		reqCon.controller = controller;
+		controller.ctx = reqCon.ctx;
 
 		// let func = async (err?: any) => {
 		// 	if (err)
 		// 		throw err;
 
 		await controller.init();
-		let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
+		let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.ctx]);
 		if (result == null || result === undefined) {
 			// Do nothing and pass to next function
-		} else if (reqCon.req.accepts("json")) {
-			reqCon.res.json(result);
-		} else if (reqCon.req.accepts("html")) {
+		} else if (reqCon.ctx.accepts("json")) {
+			reqCon.ctx.body = result;
+		} else if (reqCon.ctx.accepts("html")) {
 			let viewName = reqCon.controllerName + "/" + reqCon.actionName;
-			reqCon.res.render(viewName, result, null);
+			reqCon.ctx.render(viewName, result);
 		} else {
-			reqCon.res.send(result);
+			reqCon.ctx.body = result;
 		}
 		// }
 		// await this.executeNext(reqCon, func);

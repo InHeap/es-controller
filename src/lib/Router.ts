@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as express from "express";
+import * as koa from "koa";
 
 import RequestContainer from "./RequestContainer";
 import Route from "./Route";
@@ -8,25 +8,25 @@ import DependencyContainer from "./DependencyContainer";
 export default class Router {
 	routes: Route[] = new Array<Route>();
 
-	dependencies: DependencyContainer = new DependencyContainer();
+	// dependencies: DependencyContainer = new DependencyContainer();
 	// filters: Array<express.RequestHandler> = new Array();
 
-	constructor(app?: express.Application) {
+	constructor(app?: koa) {
 		if (app) {
 			this.setApp(app);
 		}
 	}
 
-	public set(key: any, value: any) {
-		this.dependencies.set(key, value);
-	}
+	// public set(key: any, value: any) {
+	// 	this.dependencies.set(key, value);
+	// }
 
-	public get(key: any) {
-		return this.dependencies.get(key);
-	}
+	// public get(key: any) {
+	// 	return this.dependencies.get(key);
+	// }
 
-	public setApp(app: express.Application) {
-		app.set("Router", this);
+	public setApp(app: koa) {
+		(<koa.BaseContext & { mvc }>app.context).mvc = this;
 		app.use(this.handler);
 	}
 
@@ -103,17 +103,15 @@ export default class Router {
 	// 	return await fnc(reqCon.req, reqCon.res, nxt);
 	// }
 
-	public async handler(req: express.Request, res: express.Response, next: express.NextFunction): Promise<any> {
-		let app = req.app
-		let that: this = app.get("Router");
+	public async handler(ctx: koa.Context & { mvc }, nxt: Function): Promise<any> {
+		let that = ctx.mvc;
 		try {
 			for (let i = 0; i < that.routes.length; i++) {
 				let route: Route = that.routes[i];
-				let reqCon: RequestContainer = route.match(req);
-				if (reqCon.match) {
+				let reqCon: RequestContainer = route.match(ctx);
+				if (reqCon) {
 					reqCon.router = that;
-					reqCon.req = req;
-					reqCon.res = res;
+					reqCon.ctx = ctx;
 					// let func = async (err?: any) => {
 					// 	if (err)
 					// 		throw err;
@@ -123,9 +121,9 @@ export default class Router {
 					break;
 				}
 			}
-			next();
+			nxt();
 		} catch (err) {
-			next(err);
+			ctx.throw(err);
 		}
 	}
 

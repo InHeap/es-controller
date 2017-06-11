@@ -35,25 +35,23 @@ class ControllerContainer {
         return action;
     }
     async handle(reqCon) {
-        Object.assign(reqCon.req.params, reqCon.req.query);
-        reqCon.set('request', reqCon.req);
-        reqCon.set('response', reqCon.res);
+        Object.assign(reqCon.ctx.params, reqCon.ctx.query);
         let controller = this.generate();
         controller.reqCon = reqCon;
-        reqCon.controller = controller;
+        controller.ctx = reqCon.ctx;
         await controller.init();
-        let result = await Reflect.apply(reqCon.action, controller, [reqCon.req.params, reqCon.req.body]);
+        let result = await Reflect.apply(reqCon.action, controller, [reqCon.ctx]);
         if (result == null || result === undefined) {
         }
-        else if (reqCon.req.accepts("json")) {
-            reqCon.res.json(result);
+        else if (reqCon.ctx.accepts("json")) {
+            reqCon.ctx.body = result;
         }
-        else if (reqCon.req.accepts("html")) {
+        else if (reqCon.ctx.accepts("html")) {
             let viewName = reqCon.controllerName + "/" + reqCon.actionName;
-            reqCon.res.render(viewName, result, null);
+            reqCon.ctx.render(viewName, result);
         }
         else {
-            reqCon.res.send(result);
+            reqCon.ctx.body = result;
         }
     }
 }

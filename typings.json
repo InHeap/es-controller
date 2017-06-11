@@ -3,10 +3,8 @@
     "node": "registry:dt/node"
   },
   "dependencies": {
-    "express": "registry:dt/express",
-    "express-serve-static-core": "registry:dt/express-serve-static-core",
+    "koa": "registry:dt/koa",
     "mime": "registry:dt/mime",
-    "serve-static": "registry:dt/serve-static",
     "xregexp": "registry:dt/xregexp"
   }
 }

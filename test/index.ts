@@ -1,13 +1,11 @@
-/// <reference path="./../index.ts" />
-
-import * as express from "express";
+import * as koa from "koa";
 import * as es from "./../index";
 
 /*app.get('/', function(req, res) {
     res.send('Hello World!');
 });*/
 
-var app = express();
+var app = new koa();
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
 
