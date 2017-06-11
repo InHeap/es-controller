@@ -79,6 +79,8 @@ export default class ControllerContainer {
 		let controller = this.generate();
 		controller.reqCon = reqCon;
 		controller.ctx = reqCon.ctx;
+		controller.request = reqCon.ctx.request;
+		controller.body = reqCon.ctx.request.body;
 
 		// let func = async (err?: any) => {
 		// 	if (err)

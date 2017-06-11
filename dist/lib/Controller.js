@@ -4,6 +4,8 @@ class Controller {
     constructor() {
         this.reqCon = null;
         this.ctx = null;
+        this.request = null;
+        this.body = null;
     }
     async init() {
     }

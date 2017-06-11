@@ -4,6 +4,8 @@ import RequestContainer, { Context } from "./RequestContainer";
 export default class Controller {
 	reqCon: RequestContainer = null;
 	ctx: Context = null;
+	request: koa.Request = null;
+	body = null;
 	// filters: Array<express.RequestHandler> = new Array();
 
 	async init(): Promise<void> {
