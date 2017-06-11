@@ -5,9 +5,15 @@ import Controller from "./Controller";
 import Router from "./Router";
 import DependencyContainer from "./DependencyContainer";
 
+
+export interface Context extends koa.Context {
+	params: any;
+	render: Function;
+}
+
 export default class {
 	// dependencies: DependencyContainer = new DependencyContainer();
-	ctx: koa.Context & { params?, render?} = null;
+	ctx: Context = null;
 	parts: RegExpExecArray = null;
 	controllerName: string = "";
 	controllerContainer: ControllerContainer = null;

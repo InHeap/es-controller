@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as koa from "koa";
 
-import RequestContainer from "./RequestContainer";
+import RequestContainer, { Context } from "./RequestContainer";
 import Route from "./Route";
 import DependencyContainer from "./DependencyContainer";
 
@@ -96,7 +96,7 @@ export default class Router {
 	// 	return await fnc(reqCon.req, reqCon.res, nxt);
 	// }
 
-	public async handler(ctx: koa.Context, nxt: Function): Promise<any> {
+	public async handler(ctx: Context, nxt: Function): Promise<any> {
 		let that = this;
 		try {
 			for (let i = 0; i < that.routes.length; i++) {

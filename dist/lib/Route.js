@@ -86,12 +86,12 @@ class Route {
         }
         this.reg = xregexp(urlregexStr, "g");
     }
-    match(req) {
+    match(ctx) {
         let reqCon = new RequestContainer_1.default();
-        if (!xregexp.test(req.url, this.reg)) {
+        if (!xregexp.test(ctx.url, this.reg)) {
             return null;
         }
-        reqCon.parts = xregexp.exec(req.url, this.reg);
+        reqCon.parts = xregexp.exec(ctx.url, this.reg);
         if (reqCon.parts["controller"]) {
             reqCon.controllerName = reqCon.parts["controller"];
         }
@@ -110,7 +110,7 @@ class Route {
         else if (this.defaults.get("action")) {
             reqCon.actionName = this.defaults.get("action");
         }
-        reqCon.action = reqCon.controllerContainer.getAction(req.method, reqCon.actionName);
+        reqCon.action = reqCon.controllerContainer.getAction(ctx.method, reqCon.actionName);
         if (!reqCon.action) {
             return null;
         }

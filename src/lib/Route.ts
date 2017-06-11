@@ -105,14 +105,14 @@ export default class Route {
     this.reg = xregexp(urlregexStr, "g");
   }
 
-  match(req: koa.Context): RequestContainer {
+  match(ctx: koa.Context): RequestContainer {
     let reqCon = new RequestContainer();
 
     // Check for template regular expression
-    if (!xregexp.test(req.url, this.reg)) {
+    if (!xregexp.test(ctx.url, this.reg)) {
       return null;
     }
-    reqCon.parts = xregexp.exec(req.url, this.reg);
+    reqCon.parts = xregexp.exec(ctx.url, this.reg);
 
     // Check Controller
     if (reqCon.parts["controller"]) {
@@ -133,7 +133,7 @@ export default class Route {
     } else if (this.defaults.get("action")) {
       reqCon.actionName = this.defaults.get("action");
     }
-    reqCon.action = reqCon.controllerContainer.getAction(req.method, reqCon.actionName);
+    reqCon.action = reqCon.controllerContainer.getAction(ctx.method, reqCon.actionName);
     if (!reqCon.action) {
       return null;
     }

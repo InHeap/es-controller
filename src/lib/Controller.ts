@@ -1,9 +1,9 @@
 import * as koa from "koa";
-import RequestContainer from "./RequestContainer";
+import RequestContainer, { Context } from "./RequestContainer";
 
 export default class Controller {
 	reqCon: RequestContainer = null;
-	ctx: koa.Context & { params?, render?} = null;
+	ctx: Context = null;
 	// filters: Array<express.RequestHandler> = new Array();
 
 	async init(): Promise<void> {
