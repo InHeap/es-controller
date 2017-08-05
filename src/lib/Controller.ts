@@ -8,7 +8,7 @@ export default class Controller {
 	body = null;
 	// filters: Array<express.RequestHandler> = new Array();
 
-	async init(): Promise<void> {
+	init() {
 	}
 
 	// get(key: string): any {

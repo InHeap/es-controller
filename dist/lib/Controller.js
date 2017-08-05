@@ -7,7 +7,7 @@ class Controller {
         this.request = null;
         this.body = null;
     }
-    async init() {
+    init() {
     }
     view(args, viewName) {
         if (!viewName) {

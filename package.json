@@ -1,6 +1,6 @@
 {
   "name": "es-controller",
-  "version": "2.0.5",
+  "version": "2.0.7",
   "description": "Controller framework for Nodejs supporting es6",
   "main": "./dist/index.js",
   "types": "./src/index.ts",

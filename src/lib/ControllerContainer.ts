@@ -80,7 +80,7 @@ export default class ControllerContainer {
 		controller.reqCon = reqCon;
 		controller.ctx = reqCon.ctx;
 		controller.request = reqCon.ctx.request;
-		controller.body = reqCon.ctx.request.body;
+		controller.body = (<koa.Request & { body: any; }>reqCon.ctx.request).body;
 
 		// let func = async (err?: any) => {
 		// 	if (err)
