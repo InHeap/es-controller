@@ -37,8 +37,8 @@ export default class Router {
 		return obj;
 	}
 
-	objToMap(obj: any): Map<string, any> {
-		let strMap: Map<string, any> = new Map<string, any>();
+	objToMap(obj: any) {
+		let strMap: Map<string, string> = new Map<string, string>();
 		if (obj) {
 			for (let k of Object.keys(obj)) {
 				strMap.set(k, obj[k]);
@@ -58,6 +58,8 @@ export default class Router {
 			obj.dir = obj.dir.replace("{dirname}", baseDir);
 		}
 		let route: Route = new Route(obj.name, obj.template, obj.dir, m, obj.includeSubDir);
+		route.types = this.objToMap(obj.types);
+
 		this.routes.push(route);
 	}
 

@@ -1,6 +1,6 @@
 {
   "name": "es-controller",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Controller framework for Nodejs supporting es6",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
@@ -11,7 +11,8 @@
   "license": "GPL-3.0",
   "dependencies": {
     "koa": "*",
-    "xregexp": "*"
+    "xregexp": "*",
+    "moment": "*"
   },
   "devDependencies": {
     "pug": "*"

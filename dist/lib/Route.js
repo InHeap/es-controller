@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
 const xregexp = require("xregexp");
+const moment = require("moment");
 const Controller_1 = require("./Controller");
 const ControllerContainer_1 = require("./ControllerContainer");
 const RequestContainer_1 = require("./RequestContainer");
@@ -121,7 +122,24 @@ class Route {
         for (let i = 0; i < this.templateParams.length; i++) {
             let x = this.templateParams[i];
             if (reqCon.parts[x]) {
-                reqCon.ctx.params[x] = reqCon.parts[x];
+                let temp = reqCon.parts[x];
+                let param = null;
+                if (this.types.get(param).toLowerCase() == 'bool') {
+                    param = Boolean(param);
+                }
+                else if (this.types.get(param).toLowerCase() == 'int') {
+                    param = Number.parseInt(param);
+                }
+                else if (this.types.get(param).toLowerCase() == 'float') {
+                    param = Number.parseFloat(param);
+                }
+                else if (this.types.get(param).toLowerCase() == 'date') {
+                    param = moment(param).toDate();
+                }
+                else {
+                    param = temp;
+                }
+                reqCon.ctx.params[x] = param;
             }
             else {
                 reqCon.ctx.params[x] = this.defaults.get(x);

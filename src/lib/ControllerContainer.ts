@@ -4,7 +4,7 @@ import Controller from "./Controller";
 import RequestContainer from "./RequestContainer";
 
 export interface IClass<T> {
-	new (): T;
+	new(): T;
 }
 
 interface IControllerFactory {
@@ -73,7 +73,6 @@ export default class ControllerContainer {
 	// }
 
 	async handle(reqCon: RequestContainer): Promise<void> {
-		Object.assign(reqCon.ctx.params, reqCon.ctx.query);
 		// reqCon.set('request', reqCon.ctx);
 		// reqCon.set('response', reqCon.res);
 		let controller = this.generate();
@@ -87,7 +86,9 @@ export default class ControllerContainer {
 		// 		throw err;
 
 		await controller.init();
-		let result: any = await Reflect.apply(reqCon.action, controller, [reqCon.ctx]);
+		let result: any = await Reflect.apply(reqCon.action, controller,
+			[reqCon.ctx.params, reqCon.ctx.query, reqCon.ctx.body]);
+
 		if (result == null || result === undefined) {
 			// Do nothing and pass to next function
 		} else if (reqCon.ctx.accepts("json")) {

@@ -35,14 +35,13 @@ class ControllerContainer {
         return action;
     }
     async handle(reqCon) {
-        Object.assign(reqCon.ctx.params, reqCon.ctx.query);
         let controller = this.generate();
         controller.reqCon = reqCon;
         controller.ctx = reqCon.ctx;
         controller.request = reqCon.ctx.request;
         controller.body = reqCon.ctx.request.body;
         await controller.init();
-        let result = await Reflect.apply(reqCon.action, controller, [reqCon.ctx]);
+        let result = await Reflect.apply(reqCon.action, controller, [reqCon.ctx.params, reqCon.ctx.query, reqCon.ctx.body]);
         if (result == null || result === undefined) {
         }
         else if (reqCon.ctx.accepts("json")) {

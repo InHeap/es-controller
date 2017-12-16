@@ -39,6 +39,7 @@ class Router {
             obj.dir = obj.dir.replace("{dirname}", baseDir);
         }
         let route = new Route_1.default(obj.name, obj.template, obj.dir, m, obj.includeSubDir);
+        route.types = this.objToMap(obj.types);
         this.routes.push(route);
     }
     load(fileName, baseDir) {
