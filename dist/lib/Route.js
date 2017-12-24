@@ -124,17 +124,22 @@ class Route {
             if (reqCon.parts[x]) {
                 let temp = reqCon.parts[x];
                 let param = null;
-                if (this.types.get(param).toLowerCase() == 'bool') {
-                    param = Boolean(param);
-                }
-                else if (this.types.get(param).toLowerCase() == 'int') {
-                    param = Number.parseInt(param);
-                }
-                else if (this.types.get(param).toLowerCase() == 'float') {
-                    param = Number.parseFloat(param);
-                }
-                else if (this.types.get(param).toLowerCase() == 'date') {
-                    param = moment(param).toDate();
+                if (this.types && this.types.get(x)) {
+                    if (this.types.get(x).toLowerCase() == 'bool') {
+                        param = Boolean(temp);
+                    }
+                    else if (this.types.get(x).toLowerCase() == 'int') {
+                        param = Number.parseInt(temp);
+                    }
+                    else if (this.types.get(x).toLowerCase() == 'float') {
+                        param = Number.parseFloat(temp);
+                    }
+                    else if (this.types.get(x).toLowerCase() == 'date') {
+                        param = moment(temp).toDate();
+                    }
+                    else {
+                        param = temp;
+                    }
                 }
                 else {
                     param = temp;
