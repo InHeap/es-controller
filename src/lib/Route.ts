@@ -14,7 +14,7 @@ export default class Route {
   dir: string;
   defaults: Map<string, string>;
   includeSubDir: boolean;
-  // filters: Array<express.RequestHandler> = new Array();
+  filters: Array<koa.Middleware> = new Array();
   types: Map<string, string>;
 
   private regex: string;
@@ -143,27 +143,27 @@ export default class Route {
     return reqCon;
   }
 
-  // async executeNext(reqCon: RequestContainer, next: express.NextFunction, index?: number): Promise<express.NextFunction> {
-  //   let fnc: express.RequestHandler = null;
-  //   let nxt: express.NextFunction = null;
-  //   if (!index) {
-  //     index = 0;
-  //   }
-  //   if (this.filters.length && this.filters.length > index) {
-  //     fnc = this.filters[index];
-  //     nxt = async (err?: any) => {
-  //       if (err)
-  //         throw err;
-  //       await this.executeNext(reqCon, next, index + 1);
-  //     };
-  //   } else {
-  //     fnc = async (req, res, next) => {
-  //       await next();
-  //     };
-  //     nxt = next;
-  //   }
-  //   return await fnc(reqCon.req, reqCon.res, nxt);
-  // }
+  async executeNext(reqCon: RequestContainer, next: () => Promise<any>, index?: number) {
+    let fnc: koa.Middleware = null;
+    let nxt: () => Promise<any> = null;
+    if (!index) {
+      index = 0;
+    }
+    if (this.filters.length && this.filters.length > index) {
+      fnc = this.filters[index];
+      nxt = async (err?: any) => {
+        if (err)
+          throw err;
+        this.executeNext(reqCon, next, index + 1);
+      };
+    } else {
+      fnc = async (ctx, next) => {
+        await next();
+      };
+      nxt = next;
+    }
+    return await fnc(reqCon.ctx, nxt);
+  }
 
   public async handle(reqCon: RequestContainer): Promise<any> {
     // Setting Request Parameters
@@ -173,14 +173,18 @@ export default class Route {
       if (reqCon.parts[x]) {
         let temp = reqCon.parts[x];
         let param = null;
-        if (this.types.get(param).toLowerCase() == 'bool') {
-          param = Boolean(param);
-        } else if (this.types.get(param).toLowerCase() == 'int') {
-          param = Number.parseInt(param);
-        } else if (this.types.get(param).toLowerCase() == 'float') {
-          param = Number.parseFloat(param);
-        } else if (this.types.get(param).toLowerCase() == 'date') {
-          param = moment(param).toDate();
+        if (this.types && this.types.get(x)) {
+          if (this.types.get(x).toLowerCase() == 'bool') {
+            param = Boolean(temp);
+          } else if (this.types.get(x).toLowerCase() == 'int') {
+            param = Number.parseInt(temp);
+          } else if (this.types.get(x).toLowerCase() == 'float') {
+            param = Number.parseFloat(temp);
+          } else if (this.types.get(x).toLowerCase() == 'date') {
+            param = moment(temp).toDate();
+          } else {
+            param = temp;
+          }
         } else {
           param = temp;
         }
@@ -189,12 +193,12 @@ export default class Route {
         reqCon.ctx.params[x] = this.defaults.get(x);
       }
     }
-    // let func = async (err?: any) => {
-    //   if (err)
-    //     throw err;
-    return await reqCon.controllerContainer.handle(reqCon);
-    // }
-    // await this.executeNext(reqCon, func);
+    let func = async (err?: any) => {
+      if (err)
+        throw err;
+      return await reqCon.controllerContainer.handle(reqCon);
+    }
+    await this.executeNext(reqCon, func);
   }
 
 }

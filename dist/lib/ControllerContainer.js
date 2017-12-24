@@ -34,26 +34,54 @@ class ControllerContainer {
         }
         return action;
     }
+    async executeNext(reqCon, next, index) {
+        let fnc = null;
+        let nxt = null;
+        if (!index) {
+            index = 0;
+        }
+        if (reqCon.controller.filters.length && reqCon.controller.filters.length > index) {
+            fnc = reqCon.controller.filters[index];
+            nxt = async (err) => {
+                if (err)
+                    throw err;
+                this.executeNext(reqCon, next, index + 1);
+            };
+        }
+        else {
+            fnc = (ctx, next) => {
+                next();
+            };
+            nxt = next;
+        }
+        return fnc(reqCon.ctx, nxt);
+    }
     async handle(reqCon) {
         let controller = this.generate();
-        controller.reqCon = reqCon;
+        controller.controllerName = reqCon.controllerName;
+        controller.actionName = reqCon.actionName;
         controller.ctx = reqCon.ctx;
         controller.request = reqCon.ctx.request;
         controller.body = reqCon.ctx.request.body;
-        await controller.init();
-        let result = await Reflect.apply(reqCon.action, controller, [reqCon.ctx.params, reqCon.ctx.query, reqCon.ctx.body]);
-        if (result == null || result === undefined) {
-        }
-        else if (reqCon.ctx.accepts("json")) {
-            reqCon.ctx.body = result;
-        }
-        else if (reqCon.ctx.accepts("html")) {
-            let viewName = reqCon.controllerName + "/" + reqCon.actionName;
-            reqCon.ctx.render(viewName, result);
-        }
-        else {
-            reqCon.ctx.body = result;
-        }
+        reqCon.controller = controller;
+        let func = async (err) => {
+            if (err)
+                throw err;
+            await controller.init();
+            let result = await Reflect.apply(reqCon.action, controller, [reqCon.ctx.params, reqCon.ctx.query, reqCon.ctx.body]);
+            if (result == null || result === undefined) {
+            }
+            else if (reqCon.ctx.accepts("json")) {
+                reqCon.ctx.body = result;
+            }
+            else if (reqCon.ctx.accepts("html")) {
+                controller.view(result);
+            }
+            else {
+                reqCon.ctx.body = result;
+            }
+        };
+        await this.executeNext(reqCon, func);
     }
 }
 exports.default = ControllerContainer;

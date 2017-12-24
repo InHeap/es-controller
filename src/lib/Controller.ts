@@ -2,11 +2,12 @@ import * as koa from "koa";
 import RequestContainer, { Context } from "./RequestContainer";
 
 export default class Controller {
-	reqCon: RequestContainer = null;
 	ctx: Context = null;
 	request: koa.Request = null;
 	body = null;
-	// filters: Array<express.RequestHandler> = new Array();
+	controllerName: string = null;
+	actionName: string = null;
+	filters: Array<koa.Middleware> = new Array();
 
 	init() {
 	}
@@ -19,9 +20,9 @@ export default class Controller {
 	// 	}
 	// }
 
-	protected view(args?: any, viewName?: string) {
+	view(args?: any, viewName?: string) {
 		if (!viewName) {
-			viewName = this.reqCon.controllerName + "/" + this.reqCon.actionName;
+			viewName = this.controllerName + "/" + this.actionName;
 		}
 		this.ctx.render(viewName, args);
 	}

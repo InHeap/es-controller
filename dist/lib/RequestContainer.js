@@ -5,6 +5,7 @@ class default_1 {
         this.ctx = null;
         this.parts = null;
         this.controllerName = "";
+        this.controller = null;
         this.controllerContainer = null;
         this.actionName = "";
         this.action = null;

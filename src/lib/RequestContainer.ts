@@ -16,6 +16,7 @@ export default class {
 	ctx: Context = null;
 	parts: RegExpExecArray = null;
 	controllerName: string = "";
+	controller: Controller = null;
 	controllerContainer: ControllerContainer = null;
 	actionName: string = "";
 	action: any = null;

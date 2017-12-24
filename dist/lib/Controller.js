@@ -2,16 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Controller {
     constructor() {
-        this.reqCon = null;
         this.ctx = null;
         this.request = null;
         this.body = null;
+        this.controllerName = null;
+        this.actionName = null;
+        this.filters = new Array();
     }
     init() {
     }
     view(args, viewName) {
         if (!viewName) {
-            viewName = this.reqCon.controllerName + "/" + this.reqCon.actionName;
+            viewName = this.controllerName + "/" + this.actionName;
         }
         this.ctx.render(viewName, args);
     }

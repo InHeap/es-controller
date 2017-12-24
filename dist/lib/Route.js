@@ -9,6 +9,7 @@ const ControllerContainer_1 = require("./ControllerContainer");
 const RequestContainer_1 = require("./RequestContainer");
 class Route {
     constructor(name, template, dir, defaults, includeSubDir) {
+        this.filters = new Array();
         this.templateParams = new Array();
         this.templateregex = xregexp("{(?<identifier>\\w+)}", "g");
         this.controllerMap = new Map();
@@ -117,6 +118,28 @@ class Route {
         }
         return reqCon;
     }
+    async executeNext(reqCon, next, index) {
+        let fnc = null;
+        let nxt = null;
+        if (!index) {
+            index = 0;
+        }
+        if (this.filters.length && this.filters.length > index) {
+            fnc = this.filters[index];
+            nxt = async (err) => {
+                if (err)
+                    throw err;
+                this.executeNext(reqCon, next, index + 1);
+            };
+        }
+        else {
+            fnc = async (ctx, next) => {
+                await next();
+            };
+            nxt = next;
+        }
+        return await fnc(reqCon.ctx, nxt);
+    }
     async handle(reqCon) {
         reqCon.ctx.params = {};
         for (let i = 0; i < this.templateParams.length; i++) {
@@ -124,17 +147,22 @@ class Route {
             if (reqCon.parts[x]) {
                 let temp = reqCon.parts[x];
                 let param = null;
-                if (this.types.get(param).toLowerCase() == 'bool') {
-                    param = Boolean(param);
-                }
-                else if (this.types.get(param).toLowerCase() == 'int') {
-                    param = Number.parseInt(param);
-                }
-                else if (this.types.get(param).toLowerCase() == 'float') {
-                    param = Number.parseFloat(param);
-                }
-                else if (this.types.get(param).toLowerCase() == 'date') {
-                    param = moment(param).toDate();
+                if (this.types && this.types.get(x)) {
+                    if (this.types.get(x).toLowerCase() == 'bool') {
+                        param = Boolean(temp);
+                    }
+                    else if (this.types.get(x).toLowerCase() == 'int') {
+                        param = Number.parseInt(temp);
+                    }
+                    else if (this.types.get(x).toLowerCase() == 'float') {
+                        param = Number.parseFloat(temp);
+                    }
+                    else if (this.types.get(x).toLowerCase() == 'date') {
+                        param = moment(temp).toDate();
+                    }
+                    else {
+                        param = temp;
+                    }
                 }
                 else {
                     param = temp;
@@ -145,7 +173,12 @@ class Route {
                 reqCon.ctx.params[x] = this.defaults.get(x);
             }
         }
-        return await reqCon.controllerContainer.handle(reqCon);
+        let func = async (err) => {
+            if (err)
+                throw err;
+            return await reqCon.controllerContainer.handle(reqCon);
+        };
+        await this.executeNext(reqCon, func);
     }
 }
 exports.default = Route;

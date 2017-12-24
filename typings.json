@@ -5,6 +5,7 @@
   "dependencies": {
     "koa": "registry:dt/koa",
     "koa-bodyparser": "registry:dt/koa-bodyparser",
+    "koa-compose": "registry:dt/koa-compose",
     "mime": "registry:dt/mime",
     "xregexp": "registry:dt/xregexp"
   }
